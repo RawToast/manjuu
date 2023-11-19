@@ -27,7 +27,8 @@
     "baseUrl": ".",
     "paths": {
       "@src/*": ["src/*"],
-      "@cypress/*": ["cypress/*"]
+      "@cypress/*": ["cypress/*"],
+      "@/*": ["./src/*"],
     },
     /* Linting */
     "strict": false,

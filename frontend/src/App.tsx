@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import './index.css'
-import { Welcome } from './pages/welcome'
+import { Welcome } from './pages/search'
 
 const ROOT_PATH = '/'
 
