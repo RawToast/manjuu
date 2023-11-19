@@ -1,4 +1,4 @@
-package hygiene.client
+package manjuu.client
 
 // import com.github.tomakehurst.wiremock._
 // import com.github.tomakehurst.wiremock.client.WireMock

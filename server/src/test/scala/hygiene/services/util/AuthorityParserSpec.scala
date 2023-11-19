@@ -1,7 +1,7 @@
-package hygiene.services.util
+package manjuu.services.util
 
-// import hygiene.Responses.multiAuthorityResponse
-// import hygiene.domain.Authority
+// import manjuu.Responses.multiAuthorityResponse
+// import manjuu.domain.Authority
 // import org.scalatest.WordSpec
 
 object AuthorityParserSpec

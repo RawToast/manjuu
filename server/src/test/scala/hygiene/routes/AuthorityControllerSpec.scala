@@ -1,10 +1,10 @@
-package hygiene.routes
+package manjuu.routes
 
 // import fs2.Task
-// import hygiene.Responses.{multiAuthorityResponse, scottishEstablishmentsJson, validEstablishmentsJson}
-// import hygiene.client.JsonClient
-// import hygiene.services._
-// import hygiene.services.util.{JsonAuthorityParser, JsonEstablishmentParser, UniversalRatingsFormatter}
+// import manjuu.Responses.{multiAuthorityResponse, scottishEstablishmentsJson, validEstablishmentsJson}
+// import manjuu.client.JsonClient
+// import manjuu.services._
+// import manjuu.services.util.{JsonAuthorityParser, JsonEstablishmentParser, UniversalRatingsFormatter}
 // import io.circe.literal._
 // import org.http4s.dsl._
 // import org.http4s.{MaybeResponse, Request, Response, Uri, _}

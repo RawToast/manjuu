@@ -1,6 +1,6 @@
-package hygiene.views
+package manjuu.views
 
-// import hygiene.domain.Authority
+// import manjuu.domain.Authority
 // import org.scalatest.WordSpec
 // import org.scalatest.mockito.MockitoSugar
 

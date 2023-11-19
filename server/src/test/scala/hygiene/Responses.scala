@@ -1,4 +1,4 @@
-package hygiene
+package manjuu
 
 import io.circe.Json
 import io.circe.literal._

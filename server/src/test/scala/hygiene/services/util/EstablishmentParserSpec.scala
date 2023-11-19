@@ -1,6 +1,6 @@
-package hygiene.services.util
+package manjuu.services.util
 
-// import hygiene.Responses.{scottishEstablishmentsJson, validEstablishmentsJson}
+// import manjuu.Responses.{scottishEstablishmentsJson, validEstablishmentsJson}
 // import org.scalatest.WordSpec
 
 object EstablishmentParserSpec

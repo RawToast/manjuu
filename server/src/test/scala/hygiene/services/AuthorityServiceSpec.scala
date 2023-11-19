@@ -1,10 +1,10 @@
-package hygiene.services
+package manjuu.services
 
 // import fs2.Task
-// import hygiene.Responses.multiAuthorityResponse
-// import hygiene.client.JsonClient
-// import hygiene.domain.Authority
-// import hygiene.services.util.JsonAuthorityParser
+// import manjuu.Responses.multiAuthorityResponse
+// import manjuu.client.JsonClient
+// import manjuu.domain.Authority
+// import manjuu.services.util.JsonAuthorityParser
 // import io.circe.literal._
 // import org.mockito.ArgumentMatchers._
 // import org.mockito.Mockito._

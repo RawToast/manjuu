@@ -5,7 +5,7 @@
   // TODO: Remove when issue is resolved https://github.com/cypress-io/cypress/issues/27448
   "ts-node": {
     "compilerOptions": {
-      "module": "es2015",
+      "module": "ESNext",
       "moduleResolution": "node"
     }
   },

@@ -1,4 +1,4 @@
-package hygiene.services.util
+package manjuu.services.util
 
 // import org.scalatest.WordSpec
 

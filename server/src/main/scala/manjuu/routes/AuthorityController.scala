@@ -1,13 +1,14 @@
-package hygiene.routes
+package manjuu.routes
 
-import hygiene.domain._
-import hygiene.services.AuthorityService
-import hygiene.services.EstablishmentService
+import manjuu.domain._
+import manjuu.services.AuthorityService
+import manjuu.services.EstablishmentService
 
 import cats.Monad
 import cats.effect._
 import cats.effect.kernel.Async
 import cats.implicits._
+import ch.qos.logback.classic.Logger
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.Method.GET

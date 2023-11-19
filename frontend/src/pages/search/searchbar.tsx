@@ -11,15 +11,21 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut
+  CommandSeparator
 } from '@/components/ui/command'
-import { Authority } from '@src/lib/client'
+import { Authority, fetchAuthorities } from '@/lib/client'
 import React from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-export function SearchBar(props: { authorities: Authority[] }) {
+export function SearchBar() {
+  const { status, data, error } = useQuery({ queryKey: ['todos'], queryFn: fetchAuthorities })
+
   const [searchText, setSearchText] = React.useState('')
-  console.log(searchText.length)
+
+  if (status === 'error') {
+    return <span>Error: {error.message}</span>
+  }
+
   return (
     <Command className='rounded-lg border shadow-md'>
       <CommandInput
@@ -32,35 +38,43 @@ export function SearchBar(props: { authorities: Authority[] }) {
       ) : (
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
+
           <CommandGroup heading='Authorities'>
-            {props.authorities.map((authority) => {
-              return (
-                <CommandItem key={authority.id}>
-                  {authority.establishments > 1000 ? (
-                    <BuildingOffice2Icon className='mr-2 h-4 w-4' />
-                  ) : authority.establishments > 100 ? (
-                    <BuildingOfficeIcon className='mr-2 h-4 w-4' />
-                  ) : authority.establishments > 10 ? (
-                    <HomeModernIcon className='mr-2 h-4 w-4' />
-                  ) : (
-                    <HomeIcon className='mr-2 h-4 w-4' />
-                  )}
-                  <span>{authority.name}</span>
-                </CommandItem>
-              )
-            })}
+            {status === 'pending' ? (
+              <CommandEmpty>Loading...</CommandEmpty>
+            ) : (
+              data.map((authority) => {
+                return <AuthorityItem key={authority.id} authority={authority}></AuthorityItem>
+              })
+            )}
           </CommandGroup>
 
           <CommandSeparator />
           <CommandGroup heading='Recent'>
-            <CommandItem id='matlock'>
-              <HomeModernIcon className='mr-2 h-4 w-4' />
-              <span>Matlock</span>
-              <CommandShortcut>⌘1</CommandShortcut>
-            </CommandItem>
+            <AuthorityItem
+              authority={{ id: 10, name: 'Matlock', establishments: 65 }}
+            ></AuthorityItem>
           </CommandGroup>
         </CommandList>
       )}
     </Command>
+  )
+}
+
+function AuthorityItem({ authority }: { authority: Authority }) {
+  return (
+    <CommandItem key={authority.id}>
+      {authority.establishments > 3000 ? (
+        <BuildingOffice2Icon className='mr-2 h-4 w-4' />
+      ) : authority.establishments > 2000 ? (
+        <BuildingOfficeIcon className='mr-2 h-4 w-4' />
+      ) : authority.establishments > 1000 ? (
+        <HomeModernIcon className='mr-2 h-4 w-4' />
+      ) : (
+        <HomeIcon className='mr-2 h-4 w-4' />
+      )}
+      <span>{authority.name}</span>
+      {/* <CommandShortcut>⌘1</CommandShortcut> */}
+    </CommandItem>
   )
 }

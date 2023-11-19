@@ -1,4 +1,4 @@
-package hygiene.views
+package manjuu.views
 
 // import org.scalatest.WordSpec
 // import org.scalatest.mockito.MockitoSugar

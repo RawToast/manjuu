@@ -1,4 +1,4 @@
-package hygiene.middleware
+package manjuu.middleware
 
 // import fs2.Task
 // import org.http4s.Method.GET

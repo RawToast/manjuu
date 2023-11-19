@@ -1,4 +1,4 @@
-package hygiene.domain
+package manjuu.domain
 
 import io.circe.Codec
 import io.circe.generic.semiauto.deriveCodec

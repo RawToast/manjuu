@@ -1,25 +1,12 @@
-package hygiene.services
+package manjuu.services
 
-import hygiene.domain.{AuthoritySummary, RatingSummary}
+import manjuu.domain.{AuthoritySummary, RatingSummary}
 
 import cats.effect.IO
 import org.http4s.dsl.impl.Auth
 
 trait EstablishmentService[F[_]]:
   def hygieneRatings(id: Int, establishments: Int): F[Option[AuthoritySummary]]
-
-// class EstablishmentService(client: JsonClient,
-//                            establishmentParser: EstablishmentParser[Json],
-//                            formatter: RatingsFormatter) extends HygieneRatings {
-
-//   lazy val logger: Logger = getLogger
-
-//   def hygieneRatings(id: Int, establishments: Int): Task[Map[String, Double]] = {
-//     client.fetch(s"/Establishments?localAuthorityId=$id&pageSize=$establishments")
-//       .map(establishmentParser.countEstablishmentRatings)
-//       .map(formatter.summariseRatings)
-//   }
-// }
 
 object EstablishmentService:
   def apply[F[_]](using ev: EstablishmentService[F]): EstablishmentService[F] = ev
