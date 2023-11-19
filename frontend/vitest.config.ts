@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
@@ -5,6 +6,9 @@ export default defineConfig({
     // ... Specify options here
     globals: true,
     environment: 'jsdom',
-    setupFiles: './src/testSetup.js',
+    setupFiles: './src/testSetup.js'
   },
+  resolve: {
+    alias: [{ find: '@', replacement: resolve(__dirname, './src') }]
+  }
 })

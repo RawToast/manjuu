@@ -29,8 +29,8 @@ function Welcome() {
     <>
       <div className='min-h-full'>
         <div className='container mx-auto'>
-          <div className='grid grid-cols-4'>
-            <div className='col-start-2 col-span-2 pt-32'>
+          <div className='grid grid-cols-6'>
+            <div className='col-start-3 col-span-2 pt-32'>
               <SearchBar authorities={DummyAuthorities} />
             </div>
           </div>
