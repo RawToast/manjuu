@@ -33,7 +33,7 @@ object AuthorityController:
     object AuthoritySizeMatcher extends OptionalQueryParamDecoderMatcher[Int]("authSize")
 
     val routes = HttpRoutes.of[F] {
-      case GET -> Root =>
+      case GET -> Root / "authority" =>
         for {
           authorities <- authorityService.authorities
           json         = authorities.asJson
