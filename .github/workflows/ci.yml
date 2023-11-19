@@ -26,10 +26,14 @@ jobs:
       run: sbt test
   frontend:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Bun
       uses: oven-sh/setup-bun@v1
     - run: bun install
+      working-directory: 'frontend'
     - run: bun build
+      working-directory: 'frontend'
     - run: bun test
+      working-directory: 'frontend'
