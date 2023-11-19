@@ -1,0 +1,35 @@
+@(ratings: Map[String, Double])
+                @tableRow(rating: String) = @{
+                    ratings.get(rating).map(percentage => {
+                            <tr>
+                            <td>{rating}</td>
+                            <td>{f"$percentage%1.2f" /* 2 decimals */}</td>
+                            </tr>
+                    })
+                }
+
+                @if(ratings.isEmpty) {
+                    <div class="alert alert-danger" role="alert">No establishments found!</div>
+                } else {
+
+                    <table class="table">
+                        <tr>
+                            <th>Rating</th>
+                            <th>Percentage</th>
+                        </tr>
+                        @for(score <- Seq("5-star", "4-star", "3-star", "2-star", "1-star", "0-star")) {
+                            @tableRow(score)
+                        }
+
+                        @for(score <- Seq("Pass", "Improvement Required")) {
+                            @tableRow(score)
+                        }
+
+                        @tableRow("Exempt")
+
+                        @for(remaining <- ratings.keySet.-("5-star", "4-star", "3-star", "2-star", "1-star", "0-star", "Pass", "Improvement Required", "Exempt")) {
+                            @tableRow(remaining)
+                        }
+
+                    </table>
+                }
