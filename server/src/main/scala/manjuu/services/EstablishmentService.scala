@@ -1,8 +1,11 @@
 package manjuu.services
 
+import manjuu.client.FSAClient
 import manjuu.domain.{AuthoritySummary, RatingSummary}
 
 import cats.effect.IO
+import cats.effect.kernel.Resource
+import io.circe.Json
 import org.http4s.dsl.impl.Auth
 
 trait EstablishmentService[F[_]]:
@@ -39,3 +42,10 @@ object EstablishmentService:
         stubData.get(id)
       )
     }
+
+  def impl(client: Resource[IO, FSAClient[IO, Json]]): EstablishmentService[IO] =
+    new EstablishmentService[IO]:
+      def hygieneRatings(id: Int, establishments: Int): IO[Option[AuthoritySummary]] =
+        return client
+          .use(_.fetch(s"authorities/$id?pageSize=$establishments"))
+          .map(_.as[AuthoritySummary].toOption)

@@ -17,7 +17,6 @@ object FSAClient:
   def json(client: Resource[IO, Client[IO]], baseUri: Uri) =
     new FSAClient[IO, Json]:
       def fetch(path: String) =
-        print("fetching")
         return client.use(
           _.expect[Json](
             Request(

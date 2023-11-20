@@ -21,6 +21,16 @@ export function SearchBar() {
   const { status, data, error } = useQuery({ queryKey: ['todos'], queryFn: fetchAuthorities })
 
   const [searchText, setSearchText] = React.useState('')
+  const [recent, setRecent] = React.useState<Authority[]>([])
+
+  function updateRecent(authority: Authority) {
+    // place on head of array, remove duplicates, and limit to 5
+    setRecent(
+      [authority, ...recent]
+      // .filter((item, index, self) => self.findIndex((i) => i.id === item.id) === index)
+      // .slice(0, 5)
+    )
+  }
 
   if (status === 'error') {
     return <span>Error: {error.message}</span>
@@ -38,32 +48,46 @@ export function SearchBar() {
       ) : (
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-
           <CommandGroup heading='Authorities'>
             {status === 'pending' ? (
               <CommandEmpty>Loading...</CommandEmpty>
             ) : (
               data.map((authority) => {
-                return <AuthorityItem key={authority.id} authority={authority}></AuthorityItem>
+                return (
+                  <AuthorityItem
+                    key={authority.id}
+                    authority={authority}
+                    onClick={updateRecent}
+                  ></AuthorityItem>
+                )
               })
             )}
           </CommandGroup>
-
           <CommandSeparator />
-          <CommandGroup heading='Recent'>
-            <AuthorityItem
-              authority={{ id: 10, name: 'Matlock', establishments: 65 }}
-            ></AuthorityItem>
-          </CommandGroup>
+          {/* <CommandGroup heading='Recent'>
+            {recent.map((authority) => (
+              <AuthorityItem
+                key={authority.id}
+                authority={authority}
+                onClick={updateRecent}
+              ></AuthorityItem>
+            ))}
+          </CommandGroup> */}
         </CommandList>
       )}
     </Command>
   )
 }
 
-function AuthorityItem({ authority }: { authority: Authority }) {
+function AuthorityItem({
+  authority,
+  onClick
+}: {
+  authority: Authority
+  onClick: (Authority) => void
+}) {
   return (
-    <CommandItem key={authority.id}>
+    <CommandItem key={authority.id} onClick={() => onClick(authority)}>
       {authority.establishments > 3000 ? (
         <BuildingOffice2Icon className='mr-2 h-4 w-4' />
       ) : authority.establishments > 2000 ? (
