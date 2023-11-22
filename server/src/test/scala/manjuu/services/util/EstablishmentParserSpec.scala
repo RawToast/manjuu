@@ -1,28 +1,22 @@
 package manjuu.services.util
 
 // import manjuu.Responses.{scottishEstablishmentsJson, validEstablishmentsJson}
-// import org.scalatest.WordSpec
 
 object EstablishmentParserSpec
-// class EstablishmentParserSpec extends WordSpec {
 
-//   "EstablishmentParser" when {
+// class  EstablishmentParserSpec extends munit.FunSuite:
+//   test("return the score of the establishment"){
+//     val score: Option[String] = JsonEstablishmentParser.establishmentRating(singleEstablishmentJson)
+//     val expectedScore = "5"
+//     assert(score.contains(expectedScore))}
 
-//     "parsing an establishment " must {
+// // "parsing an establishment " must {
 
-//       "return the score of the establishment" in {
-//         val score: Option[String] = JsonEstablishmentParser.establishmentRating(singleEstablishmentJson)
-//         val expectedScore = "5"
-//         assert(score.contains(expectedScore))
-//       }
-
-//       "return the score of the a scottish establishment" in {
-//         val score = JsonEstablishmentParser.establishmentRating(singleScottishEstablishmentJson)
-//         assert(score.nonEmpty)
-//         assert(score.contains("Pass"))
-//       }
-
-//     }
+//   test("return the score of the a scottish establishment") {
+//     val score = JsonEstablishmentParser.establishmentRating(singleScottishEstablishmentJson)
+//     assert(score.nonEmpty)
+//     assert(score.contains("Pass"))
+  // }
 
 //     "summarising establishment scores" must {
 
