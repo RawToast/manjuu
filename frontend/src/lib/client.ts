@@ -1,10 +1,14 @@
-export interface Authority {
-  name: string
-  id: string
-  establishments: number
-}
+import { z } from 'zod'
 
-export async function authorties(): Promise<Authority[]> {
+const AuthoritySchema = z.object({
+  name: z.string().min(1),
+  id: z.number().int().min(0),
+  establishments: z.number().int().min(0)
+})
+
+export type Authority = z.infer<typeof AuthoritySchema>
+
+export async function fetchAuthorities(): Promise<Authority[]> {
   const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/authority`, {
     method: 'GET',
     headers: {
@@ -13,7 +17,7 @@ export async function authorties(): Promise<Authority[]> {
   })
 
   const json = await response.json()
-  const result = json as Authority[]
+  const result = z.array(AuthoritySchema).parse(json)
   return result
 }
 

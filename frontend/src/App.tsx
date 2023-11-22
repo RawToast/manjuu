@@ -1,6 +1,7 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import './index.css'
-import { Welcome } from './pages/search'
+import { Layout } from './pages/layout'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const ROOT_PATH = '/'
 
@@ -11,10 +12,16 @@ const router = createBrowserRouter([
 
     // This route could be a hero dashboard or something
     // but we'll just redirect to the login page
-    Component: () => <Welcome />
+    Component: () => <Layout />
   }
 ])
 
+const queryClient = new QueryClient()
+
 export default function App() {
-  return <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+    </QueryClientProvider>
+  )
 }

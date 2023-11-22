@@ -16,7 +16,7 @@ val MunitCatsEffectVersion = "1.0.7"
 lazy val root = project
   .in(file("."))
   .settings(
-    name := "toshokan",
+    name := "manjuu-backend",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     libraryDependencies ++= Seq(
@@ -31,7 +31,7 @@ lazy val root = project
       "io.circe" %% "circe-literal" % CirceVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-parser"  % CirceVersion,
-      // "io.circe" %% "circe-optics"  % CirceVersion,
+      "io.circe" %% "circe-optics"  % "0.15.0",
 
       // Monocle lenses
       "dev.optics" %% "monocle-core"  % MonocleVersion,
@@ -67,6 +67,3 @@ addCommandAlias(
 )
 
 // addCommandAlias("validate", ";coverage;test;coverageReport")
-
-// HTML Templates
-// enablePlugins(SbtTwirl)
