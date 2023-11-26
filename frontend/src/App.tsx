@@ -1,27 +1,30 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import './index.css'
 import { Layout } from './pages/layout'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { RootRoute, Router, RouterProvider } from '@tanstack/react-router'
 
-const ROOT_PATH = '/'
+const rootRoute = new RootRoute({
+  component: Layout
+})
 
-const router = createBrowserRouter([
-  {
-    id: 'root',
-    path: ROOT_PATH,
+const routeTree = rootRoute.addChildren([])
 
-    // This route could be a hero dashboard or something
-    // but we'll just redirect to the login page
-    Component: () => <Layout />
+const router = new Router({
+  routeTree
+})
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
   }
-])
+}
 
 const queryClient = new QueryClient()
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+      <RouterProvider router={router} />
     </QueryClientProvider>
   )
 }

@@ -6,7 +6,6 @@ import io.circe.Json
 import io.circe.optics.JsonPath._
 import io.circe.syntax._
 import monocle.Traversal
-// import monocle.{Optional, Traversal}
 
 trait AuthorityParser:
   def summariseAuthorites(authData: Json): Seq[Authority]

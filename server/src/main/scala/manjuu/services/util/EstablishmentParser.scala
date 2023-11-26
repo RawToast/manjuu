@@ -1,26 +1,27 @@
 package manjuu.services.util
 
-// import io.circe.Json
+import io.circe.Json
+import io.circe.optics.JsonPath._
+import io.circe.syntax._
+import monocle.Traversal
 
-trait EstablishmentParser[T]:
-  def establishmentRating(singleEstablishment: T): Option[String]
+trait EstablishmentParser:
+  def establishmentRating(singleEstablishment: Json): Option[String]
 
-  def countEstablishmentRatings(validEstablishmentsJson: T): Map[String, Int]
+  def countEstablishmentRatings(validEstablishmentsJson: Json): Map[String, Int]
 
-// object JsonEstablishmentParser extends EstablishmentParser[Json] {
+object EstablishmentParser:
+  def impl(): EstablishmentParser = new EstablishmentParser:
 
-//   import io.circe.optics.JsonPath._
+    def establishmentRating(singleEstablishment: Json): Option[String] =
+      root.RatingValue.string.getOption(singleEstablishment)
 
-//   def establishmentRating(singleEstablishment: Json): Option[String] =
-//     root.RatingValue.string.getOption(singleEstablishment)
+    def countEstablishmentRatings(validEstablishments: Json): Map[String, Int] =
+      import cats.implicits._
 
-//   def countEstablishmentRatings(validEstablishments: Json): Map[String, Int] = {
-//     import cats.implicits._
+      // AuthoritySummary(name: String, ratings: RatingSummary)
+      val scores: Seq[String] =
+        root.establishments.each.RatingValue.string.getAll(validEstablishments)
 
-//     val scores: Seq[String] = root.establishments.each.RatingValue.string.getAll(validEstablishments)
-
-//     // Fold and combine with an empty map to build totals for each score
-//     scores.foldLeft(Map.empty[String, Int])((scoreMap, score) =>
-//       scoreMap |+| Map(score -> 1))
-//   }
-// }
+      // Fold and combine with an empty map to build totals for each score
+      scores.foldLeft(Map.empty[String, Int])((scoreMap, score) => scoreMap |+| Map(score -> 1))

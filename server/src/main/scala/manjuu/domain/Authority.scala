@@ -30,7 +30,40 @@ enum RatingSummary:
 object RatingSummary:
   given Codec[RatingSummary] = deriveCodec
 
-case class AuthoritySummary(name: String, ratings: RatingSummary)
+  def fromMap(ratingsMap: Map[String, Int]) =
+    val isStandard =
+      Seq("5", "4", "3", "2", "1", "0").exists(ratingsMap.keySet.contains(_))
+    val isScottish =
+      Seq("Pass", "Improvement Required").exists(ratingsMap.keySet.contains(_))
+
+    if isStandard then
+      Standard(
+        five = ratingsMap.getOrElse("5", 0).toString,
+        four = ratingsMap.getOrElse("4", 0).toString,
+        three = ratingsMap.getOrElse("3", 0).toString,
+        two = ratingsMap.getOrElse("2", 0).toString,
+        one = ratingsMap.getOrElse("1", 0).toString,
+        zero = ratingsMap.getOrElse("0", 0).toString,
+        exempt = ratingsMap.getOrElse("Exempt", 0).toString
+      )
+    else if isScottish then
+      Scottish(
+        pass = ratingsMap.getOrElse("Pass", 0).toString,
+        improvementRequired = ratingsMap.getOrElse("Improvement Required", 0).toString,
+        exempt = ratingsMap.getOrElse("Exempt", 0).toString
+      )
+    else // Assume standard for now
+      Standard(
+        five = ratingsMap.getOrElse("5-star", 0).toString,
+        four = ratingsMap.getOrElse("4-star", 0).toString,
+        three = ratingsMap.getOrElse("3-star", 0).toString,
+        two = ratingsMap.getOrElse("2-star", 0).toString,
+        one = ratingsMap.getOrElse("1-star", 0).toString,
+        zero = ratingsMap.getOrElse("0-star", 0).toString,
+        exempt = ratingsMap.getOrElse("Exempt", 0).toString
+      )
+
+case class AuthoritySummary(name: String, url: String, establishments: Int, ratings: RatingSummary)
 
 object AuthoritySummary:
   given Codec[AuthoritySummary] = deriveCodec

@@ -41,10 +41,10 @@ object AuthorityController:
           response    <- Ok(json)
         } yield response
 
-      case GET -> Root / "authority" / IntVar(id) :? AuthoritySizeMatcher(authSize) =>
+      case GET -> Root / "authority" / IntVar(id) =>
         // Whilst this works, it may be better to run multiple parallel searches and a page size
         for {
-          establishments <- establishmentService.hygieneRatings(id, authSize.getOrElse(100))
+          establishments <- establishmentService.hygieneRatings(id)
           json            = establishments.asJson
           response       <- Ok(json)
         } yield response
