@@ -18,13 +18,14 @@ trait FSAClient[F[_], T]:
 object FSAClient:
   def impl(client: Resource[IO, Client[IO]], baseUri: Uri) =
     new FSAClient[IO, Json]:
+      val versionHeader                                                = "x-api-version" -> "2"
       def fetch(path: String, params: Map[String, String] = Map.empty) =
         return client.use(
           _.expect[Json](
             Request(
               Method.GET,
               (baseUri / path).withQueryParams(params),
-              headers = Headers("x-api-version" -> "2")
+              headers = Headers(versionHeader)
             )
           )
         )
@@ -34,7 +35,7 @@ object FSAClient:
             Request(
               Method.GET,
               baseUri / path,
-              headers = Headers("x-api-version" -> "2", "followRedirects" -> "true")
+              headers = Headers(headers = Headers(versionHeader))
             )
           )
         )

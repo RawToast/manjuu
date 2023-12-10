@@ -1,5 +1,5 @@
 import { Outlet } from '@tanstack/react-router'
-import { SearchBar } from './search'
+import { SearchBar } from './searchbar'
 
 function Layout() {
   return (

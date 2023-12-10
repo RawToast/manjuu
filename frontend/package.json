@@ -12,6 +12,7 @@
     "format": "bunx prettier --ignore-path .gitignore --write \"src/**/*.{js,jsx,ts,tsx,json,html,css,scss,md}\"",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest",
+    "tdd": "vitest -w -u",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
+    "node-fetch": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.0.0",

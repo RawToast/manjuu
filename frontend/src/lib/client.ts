@@ -1,3 +1,4 @@
+import fetch from 'node-fetch'
 import { z } from 'zod'
 
 const AuthoritySchema = z.object({
@@ -7,19 +8,6 @@ const AuthoritySchema = z.object({
 })
 
 export type Authority = z.infer<typeof AuthoritySchema>
-
-export async function fetchAuthorities(): Promise<Authority[]> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/authority`, {
-    method: 'GET',
-    headers: {
-      accept: 'application/json'
-    }
-  })
-
-  const json = await response.json()
-  const result = z.array(AuthoritySchema).parse(json)
-  return result
-}
 
 export interface StandardRatings {
   five: number
@@ -42,8 +30,21 @@ export interface AuthoritySummary {
   ratings: StandardRatings | ScottishRatings
 }
 
+export async function fetchAuthorities(): Promise<Authority[]> {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/authority`, {
+    method: 'GET',
+    headers: {
+      accept: 'application/json'
+    }
+  })
+
+  const json = await response.json()
+  const result = z.array(AuthoritySchema).parse(json)
+  return result
+}
+
 export async function fetchAuthorityStats(id): Promise<AuthoritySummary> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/authority/${id}/stats`, {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/authority/${id}`, {
     method: 'GET',
     headers: {
       accept: 'application/json'
