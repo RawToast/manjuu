@@ -1,4 +1,3 @@
-import fetch from 'node-fetch'
 import { z } from 'zod'
 
 const AuthoritySchema = z.object({
@@ -28,6 +27,8 @@ export interface ScottishRatings {
 export interface AuthoritySummary {
   name: string
   ratings: StandardRatings | ScottishRatings
+  establishments: number
+  url: string
 }
 
 export async function fetchAuthorities(): Promise<Authority[]> {
@@ -43,7 +44,7 @@ export async function fetchAuthorities(): Promise<Authority[]> {
   return result
 }
 
-export async function fetchAuthorityStats(id): Promise<AuthoritySummary> {
+export async function fetchAuthorityStats(id: string): Promise<AuthoritySummary> {
   const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/authority/${id}`, {
     method: 'GET',
     headers: {

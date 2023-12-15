@@ -16,6 +16,7 @@ import {
 import { Authority, fetchAuthorities } from '@/lib/client'
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 
 export function SearchBar() {
   const { status, data, error } = useQuery({ queryKey: ['todos'], queryFn: fetchAuthorities })
@@ -36,6 +37,14 @@ export function SearchBar() {
     return <span>Error: {error.message}</span>
   }
 
+  function onAuthorityClick(
+    _e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    _authorityId: number
+  ) {
+    // Could update recent here
+    setSearchText('')
+  }
+
   return (
     <Command className='rounded-lg border shadow-md'>
       <CommandInput
@@ -54,11 +63,18 @@ export function SearchBar() {
             ) : (
               data.map((authority) => {
                 return (
-                  <AuthorityItem
+                  <Link
                     key={authority.id}
-                    authority={authority}
-                    onClick={updateRecent}
-                  ></AuthorityItem>
+                    to='/authority/$authorityId'
+                    params={{ authorityId: `${authority.id}` }}
+                    onClick={(e) => onAuthorityClick(e, authority.id)}
+                  >
+                    <AuthorityItem
+                      key={'item' + authority.id}
+                      authority={authority}
+                      onClick={updateRecent}
+                    ></AuthorityItem>
+                  </Link>
                 )
               })
             )}
