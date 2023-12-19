@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     // ... Specify options here
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: './src/testSetup.js'
   },
   resolve: {

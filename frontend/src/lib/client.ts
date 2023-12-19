@@ -24,9 +24,14 @@ export interface ScottishRatings {
   exempt: number
 }
 
+export interface Ratings {
+  Scottish: ScottishRatings | null
+  Standard: StandardRatings | null
+}
+
 export interface AuthoritySummary {
   name: string
-  ratings: StandardRatings | ScottishRatings
+  ratings: Ratings
   establishments: number
   url: string
 }
