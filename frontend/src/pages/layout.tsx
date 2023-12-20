@@ -1,5 +1,5 @@
 import { Outlet } from '@tanstack/react-router'
-import { SearchBar } from './search'
+import { SearchBar } from './searchbar'
 
 function Layout() {
   return (
@@ -8,7 +8,7 @@ function Layout() {
         <div className='col-span-2 col-start-3 pt-32'>
           <SearchBar />
         </div>
-        <div className='col-span-2 col-start-3 pt-32'>
+        <div className='col-span-2 col-start-3 pt-4'>
           <Outlet />
         </div>
       </div>

@@ -17,15 +17,15 @@ object EstablishmentRatings:
 
 enum RatingSummary:
   case Standard(
-    five: String,
-    four: String,
-    three: String,
-    two: String,
-    one: String,
-    zero: String,
-    exempt: String
+    five: Int,
+    four: Int,
+    three: Int,
+    two: Int,
+    one: Int,
+    zero: Int,
+    exempt: Int
   )
-  case Scottish(pass: String, improvementRequired: String, exempt: String)
+  case Scottish(pass: Int, improvementRequired: Int, exempt: Int)
 
 object RatingSummary:
   given Codec[RatingSummary] = deriveCodec
@@ -38,29 +38,29 @@ object RatingSummary:
 
     if isStandard then
       Standard(
-        five = ratingsMap.getOrElse("5", 0).toString,
-        four = ratingsMap.getOrElse("4", 0).toString,
-        three = ratingsMap.getOrElse("3", 0).toString,
-        two = ratingsMap.getOrElse("2", 0).toString,
-        one = ratingsMap.getOrElse("1", 0).toString,
-        zero = ratingsMap.getOrElse("0", 0).toString,
-        exempt = ratingsMap.getOrElse("Exempt", 0).toString
+        five = ratingsMap.getOrElse("5", 0),
+        four = ratingsMap.getOrElse("4", 0),
+        three = ratingsMap.getOrElse("3", 0),
+        two = ratingsMap.getOrElse("2", 0),
+        one = ratingsMap.getOrElse("1", 0),
+        zero = ratingsMap.getOrElse("0", 0),
+        exempt = ratingsMap.getOrElse("Exempt", 0)
       )
     else if isScottish then
       Scottish(
-        pass = ratingsMap.getOrElse("Pass", 0).toString,
-        improvementRequired = ratingsMap.getOrElse("Improvement Required", 0).toString,
-        exempt = ratingsMap.getOrElse("Exempt", 0).toString
+        pass = ratingsMap.getOrElse("Pass", 0),
+        improvementRequired = ratingsMap.getOrElse("Improvement Required", 0),
+        exempt = ratingsMap.getOrElse("Exempt", 0)
       )
     else // Assume standard for now
       Standard(
-        five = ratingsMap.getOrElse("5-star", 0).toString,
-        four = ratingsMap.getOrElse("4-star", 0).toString,
-        three = ratingsMap.getOrElse("3-star", 0).toString,
-        two = ratingsMap.getOrElse("2-star", 0).toString,
-        one = ratingsMap.getOrElse("1-star", 0).toString,
-        zero = ratingsMap.getOrElse("0-star", 0).toString,
-        exempt = ratingsMap.getOrElse("Exempt", 0).toString
+        five = ratingsMap.getOrElse("5-star", 0),
+        four = ratingsMap.getOrElse("4-star", 0),
+        three = ratingsMap.getOrElse("3-star", 0),
+        two = ratingsMap.getOrElse("2-star", 0),
+        one = ratingsMap.getOrElse("1-star", 0),
+        zero = ratingsMap.getOrElse("0-star", 0),
+        exempt = ratingsMap.getOrElse("Exempt", 0)
       )
 
 case class AuthoritySummary(name: String, url: String, establishments: Int, ratings: RatingSummary)

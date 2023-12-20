@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Renders searchbar 1`] = `
+<input
+  aria-autocomplete="list"
+  aria-controls=":r0:"
+  aria-expanded="true"
+  aria-labelledby=":r1:"
+  autocomplete="off"
+  autocorrect="off"
+  class="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+  cmdk-input=""
+  data-testid="searchbar-input"
+  id=":r2:"
+  placeholder="Search for an authority..."
+  role="combobox"
+  spellcheck="false"
+  type="text"
+  value=""
+/>
+`;
