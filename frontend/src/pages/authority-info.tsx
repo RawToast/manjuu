@@ -1,5 +1,3 @@
-// import React from 'react'
-
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Label } from '@/components/ui/label'
@@ -7,18 +5,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { authorityInfoQueryOptions } from '@/lib/router'
 import { useQuery } from '@tanstack/react-query'
 import { Ratings, ScottishRatings, StandardRatings } from '@src/lib/client'
-import { useEffect, useState } from 'react'
-
-export default function ProgressAnimated(value) {
-  const [progress, setProgress] = useState(1)
-
-  useEffect(() => {
-    const timer = setTimeout(() => setProgress(value), 500)
-    return () => clearTimeout(timer)
-  }, [])
-
-  return <Progress value={progress} className='px- w-[80%]' />
-}
 
 const LoadingCard = () => (
   <Card>
@@ -47,25 +33,44 @@ const RatingsContent = ({ ratings }: { ratings: Ratings }) => {
 
     return (
       <div className='space-y-2'>
-        <Label>Pass</Label>
-        <Progress value={passScore} className='w-[90%]' />
-        <Label>Improvement Required</Label>
-        <Progress value={improvementRequiredScore} className='w-[90%]' />
-        <Label>Exempt</Label>
-        <Progress value={exemptScore} className='w-[90%]' />
+        <RatingSection label='Pass' score={passScore} />
+        <RatingSection label='Improvement Required' score={improvementRequiredScore} />
+        <RatingSection label='Exempt' score={exemptScore} />
       </div>
     )
   }
   const rating = ratings.Standard as StandardRatings
+  const total =
+    rating.five + rating.four + rating.three + rating.two + rating.one + rating.zero + rating.exempt
+
+  const fiveScore = Math.round((rating.five / total) * 100)
+  const fourScore = Math.round((rating.four / total) * 100)
+  const threeScore = Math.round((rating.three / total) * 100)
+  const twoScore = Math.round((rating.two / total) * 100)
+  const oneScore = Math.round((rating.one / total) * 100)
+  const zeroScore = Math.round((rating.zero / total) * 100)
+  const exemptScore = Math.round((rating.exempt / total) * 100)
   return (
     <div>
-      <p>Standard Ratings</p>
-      <p>{rating.five}</p>
+      <RatingSection label='Very Good' score={fiveScore} />
+      <RatingSection label='Good' score={fourScore} />
+      <RatingSection label='Satisfactory' score={threeScore} />
+      <RatingSection label='Improvement necessary' score={twoScore} />
+      <RatingSection label='Major improvement necessary' score={oneScore} />
+      <RatingSection label='Urgent improvement necessary' score={zeroScore} />
+      <RatingSection label='Exempt' score={exemptScore} />
     </div>
   )
 }
 
-export function AuthorityInfo({ authorityId }: { authorityId: string }) {
+const RatingSection = ({ label, score }: { label: string; score: number }) => (
+  <div className='mt-2'>
+    <Label>{label}</Label>
+    <Progress value={score} className='w-[90%]' />
+  </div>
+)
+
+export const AuthorityInfo = ({ authorityId }: { authorityId: string }) => {
   const result = useQuery(authorityInfoQueryOptions(authorityId))
 
   const { data, isPending, isError } = result
