@@ -4,6 +4,7 @@ import io.circe.Json
 import io.circe.optics.JsonPath._
 import io.circe.syntax._
 import monocle.Traversal
+import scala.collection.immutable.Seq
 
 trait EstablishmentParser:
   def establishmentRating(singleEstablishment: Json): Option[String]

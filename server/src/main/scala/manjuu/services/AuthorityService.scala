@@ -6,6 +6,7 @@ import manjuu.services.util.AuthorityParser
 
 import cats.effect.IO
 import io.circe.Json
+import scala.collection.immutable.Seq
 
 trait AuthorityService[F[_]] {
   def authorities: F[Seq[Authority]]
