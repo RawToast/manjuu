@@ -2,20 +2,15 @@ package manjuu.services
 
 import manjuu.client.FSAClient
 import manjuu.domain.AuthoritySummary
-import manjuu.services.util.EstablishmentParser
-import manjuu.services.util.FormatterError
-import manjuu.services.util.RatingsFormatter
+import manjuu.services.util.{EstablishmentParser, FormatterError, RatingsFormatter}
 
 import cats._
 import cats.data._
-import cats.effect._
 import cats.effect.IO
 import cats.effect.kernel.Resource
 import cats.implicits._
-import cats.syntax.all._
 import io.circe.Json
 import org.http4s.EntityDecoder
-import org.http4s.dsl.impl.Auth
 import org.http4s.implicits._
 
 enum EstablishmentServiceError:
@@ -61,7 +56,7 @@ object EstablishmentService:
         val getAuthority = () =>
           EitherT(
             client
-              .get[AuthorityResponse](s"authorities/$id")
+              .get[AuthorityResponse](path"authorities" / id)
               .map(_.toRight[EstablishmentServiceError](AuthorityNotFound))
           )
 

@@ -1,4 +1,4 @@
-val scala3Version = "3.3.1"
+val scala3Version = "3.4.0"
 
 val Http4sVersion     = "0.23.22"
 val LogbackVersion    = "1.2.6"
