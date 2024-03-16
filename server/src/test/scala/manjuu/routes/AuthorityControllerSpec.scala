@@ -1,148 +1,184 @@
 package manjuu.routes
 
-// import fs2.Task
-// import manjuu.Responses.{multiAuthorityResponse, scottishEstablishmentsJson, validEstablishmentsJson}
-// import manjuu.client.JsonClient
-// import manjuu.services._
-// import manjuu.services.util.{JsonAuthorityParser, JsonEstablishmentParser, UniversalRatingsFormatter}
-// import io.circe.literal._
-// import org.http4s.dsl._
-// import org.http4s.{MaybeResponse, Request, Response, Uri, _}
-// import org.mockito.Mockito._
-// import org.scalatest.WordSpec
-// import org.scalatest.mockito.MockitoSugar
+import manjuu.domain.{Authority, AuthoritySummary, EstablishmentRatings}
+import manjuu.services.{AuthorityService, EstablishmentService, EstablishmentServiceError}
+import manjuu.services.util.RatingsFormatter
 
-object AuthorityControllerSpec
-// class AuthorityControllerSpec extends WordSpec with MockitoSugar {
+import cats.effect.IO
+import cats.effect.unsafe.IORuntime
+import io.circe._
+import io.circe.Json
+import io.circe.literal._
+import io.circe.syntax._
+import org.http4s._
+import org.http4s.Method.GET
+import org.http4s.circe._
+import org.http4s.dsl._
+import org.http4s.dsl.io._
+import org.http4s.implicits._
+import scala.collection.immutable.Seq
 
-//   "AuthorityController" when {
+class RatingsFormatterSpec extends munit.FunSuite:
+  import RatingsFormatterSpec._
 
-//     val mockClient = mock[JsonClient]
+  test("must return a list of authorities"):
+    val authorityController =
+      AuthorityController.impl(stubAuthorityService, stubEstablishmentService)
+    val routes              = authorityController.routes.orNotFound
+    val request             = Request[IO](GET, uri"/authority")
 
-//     def authorityService = new AuthorityService(mockClient, JsonAuthorityParser)
-//     val establishmentService = new EstablishmentService(mockClient, JsonEstablishmentParser, UniversalRatingsFormatter)
-//     val authorityController = new AuthorityController(establishmentService, authorityService)
+    val response: IO[Response[IO]] = routes.run(request)
+    val actualResponse             = response.unsafeRunSync()
 
-//     val authEndpoints = authorityController.endpoints
-//     val request = Request(GET, Uri.uri("/authority/1"))
+    val responseJson = actualResponse.as[Json].unsafeRunSync()
 
-//     "a local authority with no ratings selected" must {
-//       when(mockClient.fetch("/Establishments?localAuthorityId=1&pageSize=100"))
-//         .thenReturn(Task.now(json"""{}"""))
+    assertEquals(actualResponse.status, Ok)
+    assertEquals(
+      responseJson,
+      json"""[{"name":"Test Authority","id":1,"establishments":48}]"""
+    )
 
-//       val maybeResponse: Response = syncFetch(authEndpoints.run(request))
+  test("must return a summary of an authority"):
+    val authorityController =
+      AuthorityController.impl(stubAuthorityService, stubEstablishmentService)
+    val routes              = authorityController.routes.orNotFound
+    val request             = Request[IO](GET, uri"/authority/1")
 
-//       "return a 200 (Ok) response" in {
-//         assert(maybeResponse.status == Ok)
-//       }
+    val response: IO[Response[IO]] = routes.run(request)
+    val actualResponse             = response.unsafeRunSync()
 
-//       "return a HTML response" in {
-//         assert(maybeResponse.headers.get("content-type".ci).contains(Header("Content-Type", "text/html; charset=UTF-8")))
-//       }
+    val responseJson = actualResponse.as[Json].unsafeRunSync()
 
-//       "not include a tabular breakdown for the authority" in {
+    assertEquals(actualResponse.status, Ok)
+    assertEquals(
+      responseJson,
+      json"""{
+        "name":"Test Authority",
+        "url":"http://test-authority.com",
+        "establishments":48,
+        "ratings": {
+          "Standard" : 
+            {
+              "five":1,
+              "four":2,
+              "three":3,
+              "two":4,
+              "one":5,
+              "zero":6,
+              "exempt":7,
+              "awaitingInspection":8
+            }
+          }
+      }"""
+    )
 
-//         val pageTask: Task[String] = maybeResponse.as[String]
-//         val page = pageTask.unsafeRun()
+  test("must return the summary of an Scottish authority"):
+    val authorityController        =
+      AuthorityController.impl(stubAuthorityService, stubEstablishmentService)
+    val routes                     = authorityController.routes.orNotFound
+    val request                    = Request[IO](GET, uri"/authority/2")
+    val response: IO[Response[IO]] = routes.run(request)
+    val actualResponse             = response.unsafeRunSync()
 
-//         assert(!page.contains("<table"))
-//         //Rating Percentage
-//         assert(!page.contains("<th>Rating</th>"))
-//         assert(!page.contains("<th>Percentage</th>"))
-//         assert(!page.contains("<td>5-star</td>"))
-//         assert(!page.contains("<td>4-star</td>"))
-//         assert(!page.contains("<td>3-star</td>"))
-//         assert(!page.contains("<td>2-star</td>"))
-//         assert(!page.contains("<td>1-star</td>"))
-//         assert(!page.contains("<td>Exempt</td>"))
+    val responseJson = actualResponse.as[Json].unsafeRunSync()
 
-//         assert(page.contains("No establishments found"))
-//       }
-//     }
+    assertEquals(actualResponse.status, Ok)
+    assertEquals(
+      responseJson,
+      json"""{
+        "name":"Test Authority",
+        "url":"http://test-authority.com",
+        "establishments":48,
+        "ratings": {
+          "Scottish" : 
+            {
+              "passAndEatSafe":1,
+              "pass":2,
+              "improvementRequired":3,
+              "awaitingPublication":4,
+              "awaitingInspection":5,
+              "exempt":6
+            }
+          }
+      }"""
+    )
 
-//     "a local authority with ratings is selected" must {
-//       when(mockClient.fetch("/Establishments?localAuthorityId=1&pageSize=100"))
-//         .thenReturn(Task.delay(validEstablishmentsJson))
+  test("must return a 422 when the ratings are invalid"):
+    val establishmentService = new EstablishmentService[IO]:
+      def hygieneRatings(id: Int): IO[Either[EstablishmentServiceError, AuthoritySummary]] =
+        IO(Left(EstablishmentServiceError.InvalidRatings("Invalid ratings")))
 
-//       val maybeResponse: Response = syncFetch(authEndpoints.run(request))
+    val authorityController = AuthorityController.impl(stubAuthorityService, establishmentService)
+    val routes              = authorityController.routes.orNotFound
+    val request             = Request[IO](GET, uri"/authority/1")
 
-//       "return a 200 (Ok) response" in {
-//         assert(maybeResponse.status == Ok)
-//       }
+    val response: Response[IO] = routes.run(request).unsafeRunSync()
 
-//       "return a HTML response" in {
-//         assert(maybeResponse.headers.get("content-type".ci).contains(Header("Content-Type", "text/html; charset=UTF-8")))
-//       }
+    assertEquals(response.status, UnprocessableEntity)
 
-//       "include a tabular breakdown for the authority" in {
+  test("must return a 404 when the authority is not found"):
+    val establishmentService = new EstablishmentService[IO]:
+      def hygieneRatings(id: Int): IO[Either[EstablishmentServiceError, AuthoritySummary]] =
+        IO(Left(EstablishmentServiceError.AuthorityNotFound))
 
-//         val pageTask: Task[String] = maybeResponse.as[String]
-//         val page = pageTask.unsafeRun()
+    val authorityController = AuthorityController.impl(stubAuthorityService, establishmentService)
+    val routes              = authorityController.routes.orNotFound
+    val request             = Request[IO](GET, uri"/authority/1")
 
-//         assert(page.contains("<table"))
-//         //Rating Percentage
-//         assert(page.contains("<th>Rating</th>"))
-//         assert(page.contains("<th>Percentage</th>"))
-//         assert(page.contains("<td>5-star</td>"))
-//         assert(page.contains("<td>4-star</td>"))
-//         assert(page.contains("<td>3-star</td>"))
-//         assert(page.contains("<td>2-star</td>"))
-//         assert(page.contains("<td>1-star</td>"))
-//         assert(page.contains("<td>Exempt</td>"))
-//       }
-//     }
+    val response: Response[IO] = routes.run(request).unsafeRunSync()
 
-//     "a scottish authority with ratings is selected" must {
-//       when(mockClient.fetch("/Establishments?localAuthorityId=1&pageSize=100"))
-//         .thenReturn(Task.delay(scottishEstablishmentsJson))
+    assertEquals(response.status, NotFound)
 
-//       val maybeResponse: Response = syncFetch(authEndpoints.run(request))
+object RatingsFormatterSpec:
+  implicit val runtime: IORuntime = cats.effect.unsafe.IORuntime.global
 
-//       "return a 200 (Ok) response" in {
-//         assert(maybeResponse.status == Ok)
-//       }
+  val stubAuthorityService = new AuthorityService[IO] {
+    def authorities = IO(
+      Seq(
+        Authority(name = "Test Authority", id = 1, establishments = 48)
+      )
+    )
+  }
 
-//       "return a HTML response" in {
-//         assert(maybeResponse.headers.get("content-type".ci).contains(Header("Content-Type", "text/html; charset=UTF-8")))
-//       }
-
-//       "include a tabular breakdown for the authority" in {
-
-//         val pageTask: Task[String] = maybeResponse.as[String]
-//         val page = pageTask.unsafeRun()
-
-//         assert(page.contains("<table"))
-//         //Rating Percentage
-//         assert(page.contains("<th>Rating</th>"))
-//         assert(page.contains("<th>Percentage</th>"))
-
-//         // Scottish ratings
-//         assert(page.contains("<td>Pass</td>"))
-//         assert(page.contains("<td>Awaiting Publication</td>"))
-//         assert(page.contains("<td>Awaiting Inspection</td>"))
-//         assert(page.contains("<td>Improvement Required</td>"))
-//         assert(page.contains("<td>Exempt</td>"))
-
-//         // No star based ratings
-//         assert(!page.contains("-star</td>"))
-//       }
-//     }
-
-//     "fetching the index page" must {
-//       when(mockClient.fetch("/authorities/basic"))
-//         .thenReturn(Task.now(multiAuthorityResponse))
-//       val request = Request(GET, Uri.uri("/"))
-//       val maybeResponse: Response = syncFetch(authEndpoints.run(request))
-
-//       "return a 200 (Ok) response" in {
-//         assert(maybeResponse.status == Ok)
-//       }
-//     }
-//   }
-
-//   def syncFetch(r: Task[MaybeResponse]) = {
-//     // Ideally, we would not call .get on an option as it is unsafe.
-//     // As this is a test, doing so is permissible here.
-//     r.unsafeRun().toOption.get
-//   }
-// }
+  val stubEstablishmentService = new EstablishmentService[IO]:
+    def hygieneRatings(id: Int): IO[Either[EstablishmentServiceError, AuthoritySummary]] =
+      id match
+        case 2 =>
+          IO(
+            Right(
+              AuthoritySummary(
+                name = "Test Authority",
+                url = "http://test-authority.com",
+                establishments = 48,
+                ratings = EstablishmentRatings.Scottish(
+                  passAndEatSafe = 1,
+                  pass = 2,
+                  improvementRequired = 3,
+                  awaitingPublication = 4,
+                  awaitingInspection = 5,
+                  exempt = 6
+                )
+              )
+            )
+          )
+        case 1 =>
+          IO(
+            Right(
+              AuthoritySummary(
+                name = "Test Authority",
+                url = "http://test-authority.com",
+                establishments = 48,
+                ratings = EstablishmentRatings.Standard(
+                  five = 1,
+                  four = 2,
+                  three = 3,
+                  two = 4,
+                  one = 5,
+                  zero = 6,
+                  exempt = 7,
+                  awaitingInspection = 8
+                )
+              )
+            )
+          )
+        case _ => IO(Left(EstablishmentServiceError.AuthorityNotFound))

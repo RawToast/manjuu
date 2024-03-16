@@ -459,4 +459,27 @@ object Responses {
       ]
     }]}"""
 
+  val authorityResponses = Map(111 -> json"""
+    {
+    "LocalAuthorityId": 111,
+    "LocalAuthorityIdCode": "760",
+    "Name": "Aberdeen City",
+    "FriendlyName": "aberdeen-city",
+    "Url": "http://www.aberdeencity.gov.uk",
+    "SchemeUrl": "",
+    "Email": "commercial@aberdeencity.gov.uk",
+    "RegionName": "Scotland",
+    "FileName": "https://ratings.food.gov.uk/OpenDataFiles/FHRS760en-GB.xml",
+    "FileNameWelsh": null,
+    "EstablishmentCount": 2354,
+    "CreationDate": "2010-08-17T15:30:24.87",
+    "LastPublishedDate": "2024-03-15T00:38:19.047",
+    "SchemeType": 2,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://api.ratings.food.gov.uk/authorities/197"
+      }
+    ]
+  }""")
 }

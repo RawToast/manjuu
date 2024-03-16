@@ -1,36 +1,59 @@
 package manjuu.services.util
 
+import manjuu.domain.EstablishmentRatings
+
+enum FormatterError:
+  case NoRatings
+  case InvalidData(message: String)
+
 trait RatingsFormatter:
-  def summariseRatings(ratings: Map[String, Int]): Map[String, Double]
+  def summariseRatings(
+    ratings: Map[String, Int]
+  ): Either[FormatterError, EstablishmentRatings]
 
-// object UniversalRatingsFormatter extends RatingsFormatter {
-//   /**
-//     * Note that this implementation of Formatter can handle scottish or star based ratings
-//     */
-//   def summariseRatings(ratings: Map[String, Int]): Map[String, Double] = {
-//     import cats.implicits._
+object RatingsFormatter:
 
-//     if (ratings.isEmpty) Map.empty
-//     else if (ratings.keySet == Set(exempt)) toPercent(ratings)
-//     else if (ratings.keySet.exists(key => scottishRatings.contains(key))) scottishSummary |+| toPercent(ratings)
-//     else {
-//       // Calculate percentage and add `-star` prefix if required.
-//       val mySum = toPercent(ratings)
-//         .map{ case (key: String, value: Double) =>
-//           if (key.length == 1) (s"$key-star", value) else key -> value}
+  val standardRatings = Set("5", "4", "3", "2", "1", "0", "Exempt", "AwaitingInspection")
+  val scottishRatings =
+    Set(
+      "Pass",
+      "Improvement Required",
+      "Awaiting Publication",
+      "Awaiting Inspection",
+      "Exempt",
+      "Pass and Eat Safe"
+    )
 
-//       // Combination ensures we include any missing rating categories
-//       summary |+| mySum
-//     }
-//   }
+  def impl(): RatingsFormatter = new RatingsFormatter:
+    import FormatterError._
 
-//   private def toPercent(ratings: Map[String, Int]): Map[String, Double] =
-//     ratings.mapValues(v => (v.toDouble / ratings.values.sum) * 100)
-
-//   private val exempt = "Exempt"
-//   private val summary = Map[String, Double]("5-star" -> 0, "4-star" -> 0,
-//     "3-star" -> 0, "2-star" -> 0, "1-star" -> 0, "0-star" -> 0, exempt -> 0)
-
-//   private val scottishSummary = Map[String, Double]("Pass" -> 0, "Improvement Required" -> 0, exempt -> 0)
-//   private val scottishRatings = scottishSummary.keySet - exempt + "Awaiting Publication" + "Awaiting Inspection"
-// }
+    def summariseRatings(ratings: Map[String, Int]): Either[FormatterError, EstablishmentRatings] =
+      import cats.implicits._
+      return ratings match
+        case r if r.isEmpty                          => Left(NoRatings)
+        case r if r.keySet == Set("Exempt")          => Right(EstablishmentRatings.Exempt(r("Exempt")))
+        case r if r.keySet.subsetOf(standardRatings) =>
+          Right(
+            EstablishmentRatings.Standard(
+              five = ratings.getOrElse("5", 0),
+              four = ratings.getOrElse("4", 0),
+              three = ratings.getOrElse("3", 0),
+              two = ratings.getOrElse("2", 0),
+              one = ratings.getOrElse("1", 0),
+              zero = ratings.getOrElse("0", 0),
+              exempt = ratings.getOrElse("Exempt", 0),
+              awaitingInspection = ratings.getOrElse("AwaitingInspection", 0)
+            )
+          )
+        case r if r.keySet.subsetOf(scottishRatings) =>
+          Right(
+            EstablishmentRatings.Scottish(
+              passAndEatSafe = ratings.getOrElse("Pass and Eat Safe", 0),
+              pass = ratings.getOrElse("Pass", 0),
+              improvementRequired = ratings.getOrElse("Improvement Required", 0),
+              awaitingPublication = ratings.getOrElse("Awaiting Publication", 0),
+              awaitingInspection = ratings.getOrElse("Awaiting Inspection", 0),
+              exempt = ratings.getOrElse("Exempt", 0)
+            )
+          )
+        case _                                       => Left(InvalidData("Invalid ratings data"))

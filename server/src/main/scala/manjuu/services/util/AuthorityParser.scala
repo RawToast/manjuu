@@ -32,23 +32,3 @@ object AuthorityParser:
               count <- establishmentCount.getOption(json)
             } yield Authority(name, id, count)
         )
-
-// object JsonAuthorityParser extends AuthorityParser[Json] {
-//   override def summariseAuthorites(authData: Json): Seq[Authority] = {
-
-//     val authName: Optional[Json, String] = root.Name.string
-//     val authId: Optional[Json, Int] = root.LocalAuthorityId.int
-//     val establishmentCount: Optional[Json, Int] = root.EstablishmentCount.int
-
-//     traverseToAuthorities
-//       .getAll(authData)
-//       .flatMap(json =>
-//         for {
-//           // Note that if any of these paths results in a `None` for an authority,
-//           // then that authority is filtered from the results.
-//           name <- authName.getOption(json)
-//           id <- authId.getOption(json)
-//           count <- establishmentCount.getOption(json)
-//         } yield Authority(name, id, count))
-//   }
-// }
