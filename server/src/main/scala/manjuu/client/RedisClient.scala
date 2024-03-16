@@ -31,3 +31,11 @@ object Cache:
           def get(key: String): F[Option[Json]]      = redis.get(key)
           def set(key: String, value: Json): F[Unit] = redis.setEx(key, value, ttl)
     }
+
+  def memory[F[_]: Async]: Resource[F, Cache[F, String, Json]] =
+    val cache = new Cache[F, String, Json]:
+      val store                                  = scala.collection.mutable.Map.empty[String, Json]
+      def get(key: String): F[Option[Json]]      = Async[F].pure(store.get(key))
+      def set(key: String, value: Json): F[Unit] = Async[F].pure(store.update(key, value))
+
+    Resource.pure[F, Cache[F, String, Json]](cache)

@@ -1,6 +1,7 @@
 package manjuu.services
 
 import manjuu.Responses._
+import manjuu.client.Cache
 import manjuu.client.FSAClient
 import manjuu.services.util._
 
@@ -17,7 +18,7 @@ import org.http4s.implicits._
 import org.http4s.implicits.uri
 
 class EstablishmentServiceSpec extends munit.FunSuite:
-  test("EstablishmentService"):
+  test("EstablishmentService can fetch hygiene ratings for an establishment"):
     val parser                      = EstablishmentParser.impl()
     val formatter                   = RatingsFormatter.impl()
     implicit val runtime: IORuntime = cats.effect.unsafe.IORuntime.global
@@ -26,9 +27,15 @@ class EstablishmentServiceSpec extends munit.FunSuite:
     val clientResource: Resource[IO, Client[IO]] = Resource.pure[IO, Client[IO]](client)
     val fsaClient                                = FSAClient.impl(clientResource, uri"")
 
-    val service = EstablishmentService.impl(fsaClient, parser, formatter)
-    val result  = service.hygieneRatings(111).unsafeRunSync()
+    val service   = EstablishmentService.impl(fsaClient, parser, formatter)
+    val withCache = EstablishmentService.withCache(service, Cache.memory[IO])
+    val result    = withCache.hygieneRatings(111).unsafeRunSync()
     assert(result.isRight)
+
+    val result2 = withCache.hygieneRatings(111).unsafeRunSync()
+    assert(result2.isRight)
+
+    assert(result == result2)
 
 object EstablishmentServiceSpec:
   val dsl = new Http4sDsl[IO] {}
