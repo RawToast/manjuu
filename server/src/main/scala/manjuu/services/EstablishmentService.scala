@@ -3,6 +3,7 @@ package manjuu.services
 import manjuu.client.FSAClient
 import manjuu.domain.AuthoritySummary
 import manjuu.services.util.EstablishmentParser
+import manjuu.services.util.FormatterError
 import manjuu.services.util.RatingsFormatter
 
 import cats._
@@ -17,10 +18,22 @@ import org.http4s.EntityDecoder
 import org.http4s.dsl.impl.Auth
 import org.http4s.implicits._
 
+enum EstablishmentServiceError:
+  case AuthorityNotFound
+  case InvalidRatings(message: String)
+
+object EstablishmentServiceError:
+  def fromFormatterError(err: FormatterError): EstablishmentServiceError =
+    err match
+      case FormatterError.NoRatings            => InvalidRatings("No ratings found")
+      case FormatterError.InvalidData(message) =>
+        InvalidRatings("Invalid ratings data, reason: " + message)
+
 trait EstablishmentService[F[_]]:
-  def hygieneRatings(id: Int): F[Option[AuthoritySummary]]
+  def hygieneRatings(id: Int): F[Either[EstablishmentServiceError, AuthoritySummary]]
 
 object EstablishmentService:
+  import EstablishmentServiceError._
   def apply[F[_]](using ev: EstablishmentService[F]): EstablishmentService[F] = ev
 
   case class AuthorityResponse(
@@ -44,26 +57,32 @@ object EstablishmentService:
     formatter: RatingsFormatter
   ): EstablishmentService[IO] =
     new EstablishmentService[IO]:
-      def hygieneRatings(id: Int): IO[Option[AuthoritySummary]] =
-        val getAuthority = () => OptionT(client.get[AuthorityResponse](s"authorities/$id"))
-        val path         = s"establishments"
+      def hygieneRatings(id: Int): IO[Either[EstablishmentServiceError, AuthoritySummary]] =
+        val getAuthority = () =>
+          EitherT(
+            client
+              .get[AuthorityResponse](s"authorities/$id")
+              .map(_.toRight[EstablishmentServiceError](AuthorityNotFound))
+          )
 
-        val getSummary = (a: AuthorityResponse) =>
+        val path = s"establishments"
+
+        val getSummary = (authority: AuthorityResponse) =>
           client
             .fetch(
               path,
               Map(
-                "localAuthorityId" -> a.LocalAuthorityId.toString,
-                "pageSize"         -> a.EstablishmentCount.toString
+                "localAuthorityId" -> authority.LocalAuthorityId.toString,
+                "pageSize"         -> authority.EstablishmentCount.toString
               )
             )
             .map(parser.countEstablishmentRatings)
 
         val resultT = for {
           authority      <- getAuthority()
-          establishments <- OptionT.liftF(getSummary(authority))
-          summary         = formatter.summariseRatings(establishments)
-          ratings        <- OptionT.fromOption(summary.toOption)
+          establishments <- EitherT.liftF(getSummary(authority))
+          summary         = formatter.summariseRatings(establishments).leftMap(fromFormatterError)
+          ratings        <- EitherT.fromEither(summary)
         } yield AuthoritySummary(
           name = authority.Name,
           url = authority.Url,

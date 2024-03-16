@@ -39,6 +39,10 @@ enum ErrorResponse:
   case BadRequest(message: String)
   case InternalServerError(message: String)
 
+case class ErrorMessage(message: String)
+object ErrorMessage:
+  given Codec[ErrorMessage] = deriveCodec
+
 case class AuthoritySummary(
   name: String,
   url: String,

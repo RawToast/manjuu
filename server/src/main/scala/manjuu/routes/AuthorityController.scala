@@ -3,6 +3,7 @@ package manjuu.routes
 import manjuu.domain._
 import manjuu.services.AuthorityService
 import manjuu.services.EstablishmentService
+import manjuu.services.EstablishmentServiceError
 
 import cats.Monad
 import cats.effect._
@@ -42,10 +43,14 @@ object AuthorityController:
         } yield response
 
       case GET -> Root / "authority" / IntVar(id) =>
-        // Whilst this works, it may be better to run multiple parallel searches and a page size
         for {
           establishments <- establishmentService.hygieneRatings(id)
-          json            = establishments.asJson
-          response       <- Ok(json)
+          response       <- establishments match
+                              case Right(establishments)                                   =>
+                                Ok(establishments.asJson)
+                              case Left(EstablishmentServiceError.InvalidRatings(message)) =>
+                                UnprocessableEntity(ErrorMessage(message).asJson)
+                              case Left(EstablishmentServiceError.AuthorityNotFound)       =>
+                                NotFound(ErrorMessage(s"Could not find an authority with id: $id").asJson)
         } yield response
     }
