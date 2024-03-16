@@ -9,7 +9,6 @@ import dev.profunktor.redis4cats.effect.Log.Stdout.given
 import io.circe.{Json, JsonObject}
 import io.circe.parser.{decode => jsonDecode}
 import io.circe.syntax._
-import org.http4s.headers.`Access-Control-Max-Age`.Cache
 import scala.concurrent.duration.FiniteDuration
 
 trait Cache[F[_], K, V]:
