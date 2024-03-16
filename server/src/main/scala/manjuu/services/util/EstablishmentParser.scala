@@ -20,7 +20,6 @@ object EstablishmentParser:
     def countEstablishmentRatings(validEstablishments: Json): Map[String, Int] =
       import cats.implicits._
 
-      // AuthoritySummary(name: String, ratings: RatingSummary)
       val scores: Seq[String] =
         root.establishments.each.RatingValue.string.getAll(validEstablishments)
 

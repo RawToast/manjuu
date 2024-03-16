@@ -6,6 +6,7 @@ import manjuu.routes.AuthorityController
 import manjuu.services.{AuthorityService, EstablishmentService}
 import manjuu.services.util.AuthorityParser
 import manjuu.services.util.EstablishmentParser
+import manjuu.services.util.RatingsFormatter
 
 import cats.effect._
 import com.comcast.ip4s._
@@ -29,8 +30,9 @@ object Server extends IOApp:
   val establishmentParser                            = EstablishmentParser.impl()
   val fsaClient                                      = FSAClient.impl(clientResource, uri"https://api.ratings.food.gov.uk")
   val authorityService                               = AuthorityService.impl(fsaClient, authParser)
+  val ratingsFormatter                               = RatingsFormatter.impl()
   val establishmentService: EstablishmentService[IO] =
-    EstablishmentService.impl(fsaClient, establishmentParser)
+    EstablishmentService.impl(fsaClient, establishmentParser, ratingsFormatter)
   val authorityController                            = AuthorityController.impl[IO](authorityService, establishmentService)
   val authorityHttpApp                               = authorityController.routes.orNotFound
   val corsEnabledApp                                 =

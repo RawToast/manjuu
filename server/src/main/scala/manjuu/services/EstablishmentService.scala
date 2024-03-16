@@ -1,8 +1,9 @@
 package manjuu.services
 
 import manjuu.client.FSAClient
-import manjuu.domain.{AuthoritySummary, RatingSummary}
+import manjuu.domain.AuthoritySummary
 import manjuu.services.util.EstablishmentParser
+import manjuu.services.util.RatingsFormatter
 
 import cats._
 import cats.data._
@@ -22,45 +23,6 @@ trait EstablishmentService[F[_]]:
 object EstablishmentService:
   def apply[F[_]](using ev: EstablishmentService[F]): EstablishmentService[F] = ev
 
-  def stub(): EstablishmentService[IO] =
-    new EstablishmentService[IO] {
-      val stubData                                              = Map(
-        1 -> AuthoritySummary(
-          name = "Test Authority",
-          url = "http://www.test-authority.gov.uk",
-          establishments = 48,
-          ratings = RatingSummary.Standard(20, 20, 20, 10, 10, 10, 10)
-        ),
-        2 -> AuthoritySummary(
-          name = "Another Authority",
-          url = "http://www.another-authority.gov.uk",
-          establishments = 123,
-          ratings = RatingSummary.Standard(25, 20, 20, 10, 10, 10, 5)
-        ),
-        3 -> AuthoritySummary(
-          "http://www.third-authority.gov.uk",
-          "Third Authority",
-          663,
-          RatingSummary.Scottish(40, 40, 20)
-        ),
-        4 -> AuthoritySummary(
-          "http://www.fourth-authority.gov.uk",
-          "Fourth Authority",
-          6,
-          RatingSummary.Scottish(30, 40, 30)
-        ),
-        5 -> AuthoritySummary(
-          "http://www.fifth-authority.gov.uk",
-          "Fifth and final authority",
-          44,
-          RatingSummary.Standard(10, 20, 20, 10, 10, 15, 15)
-        )
-      )
-      def hygieneRatings(id: Int): IO[Option[AuthoritySummary]] = IO.pure(
-        stubData.get(id)
-      )
-    }
-
   case class AuthorityResponse(
     LocalAuthorityId: Int,
     Name: String,
@@ -78,7 +40,8 @@ object EstablishmentService:
 
   def impl(
     client: FSAClient[IO, Json],
-    parser: EstablishmentParser
+    parser: EstablishmentParser,
+    formatter: RatingsFormatter
   ): EstablishmentService[IO] =
     new EstablishmentService[IO]:
       def hygieneRatings(id: Int): IO[Option[AuthoritySummary]] =
@@ -99,7 +62,8 @@ object EstablishmentService:
         val resultT = for {
           authority      <- getAuthority()
           establishments <- OptionT.liftF(getSummary(authority))
-          ratings         = RatingSummary.fromMap(establishments)
+          summary         = formatter.summariseRatings(establishments)
+          ratings        <- OptionT.fromOption(summary.toOption)
         } yield AuthoritySummary(
           name = authority.Name,
           url = authority.Url,
