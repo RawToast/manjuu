@@ -6,9 +6,9 @@ val EdoMataVersion    = "0.11.1"
 val CirceVersion      = "0.14.5"
 val SkunkVersion      = "0.6.0"
 val MonocleVersion    = "3.2.0"
-val CatsEffect        = "3.5.1"
-val CatsVersion       = "2.9.0"
-val Redis4CatsVersion = "1.4.3"
+val CatsEffect        = "3.5.4"
+val CatsVersion       = "2.10.0"
+val Redis4CatsVersion = "1.6.0"
 
 val MunitVersion           = "0.7.29"
 val MunitCatsEffectVersion = "1.0.7"
@@ -33,13 +33,15 @@ lazy val root = project
       "io.circe" %% "circe-parser"  % CirceVersion,
       "io.circe" %% "circe-optics"  % "0.15.0",
 
+      // Redis
+      "dev.profunktor" %% "redis4cats-effects" % Redis4CatsVersion,
+
       // Monocle lenses
       "dev.optics" %% "monocle-core"  % MonocleVersion,
       "dev.optics" %% "monocle-macro" % MonocleVersion,
 
       // Logging
-      "ch.qos.logback"  % "logback-classic"     % LogbackVersion,
-      "dev.profunktor" %% "redis4cats-log4cats" % Redis4CatsVersion,
+      "ch.qos.logback" % "logback-classic" % LogbackVersion,
       // "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 
       // Test

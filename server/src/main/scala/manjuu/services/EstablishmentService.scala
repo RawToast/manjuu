@@ -1,17 +1,19 @@
 package manjuu.services
 
-import manjuu.client.FSAClient
+import manjuu.client.{Cache, FSAClient}
 import manjuu.domain.AuthoritySummary
 import manjuu.services.util.{EstablishmentParser, FormatterError, RatingsFormatter}
 
 import cats._
 import cats.data._
 import cats.effect.IO
-import cats.effect.kernel.Resource
+import cats.effect.kernel.{Async, Resource}
 import cats.implicits._
 import io.circe.Json
+import io.circe.syntax._
 import org.http4s.EntityDecoder
 import org.http4s.implicits._
+import scala.concurrent.duration.FiniteDuration
 
 enum EstablishmentServiceError:
   case AuthorityNotFound
@@ -86,3 +88,27 @@ object EstablishmentService:
         )
 
         resultT.value
+
+  def withCache[F[_]: Async](
+    service: EstablishmentService[F],
+    redisResource: Resource[F, Cache[F, String, Json]]
+  ): EstablishmentService[F] =
+    new EstablishmentService[F]:
+      def makeKey(id: Int)                                                                = s"establishments:$id"
+      def hygieneRatings(id: Int): F[Either[EstablishmentServiceError, AuthoritySummary]] =
+        val key = makeKey(id)
+        redisResource.use {
+          redis =>
+            for
+              cachedData <- redis.get(key)
+              data        = cachedData.flatMap(_.as[AuthoritySummary].toOption)
+
+              summary <- data match
+                           case Some(summary) => Monad[F].pure(summary.asRight)
+                           case None          =>
+                             service.hygieneRatings(id).flatTap {
+                               case Right(summary) => redis.set(key, summary.asJson)
+                               case _              => Applicative[F].unit
+                             }
+            yield summary
+        }
