@@ -1,9 +1,7 @@
 package manjuu.routes
 
 import manjuu.domain._
-import manjuu.services.AuthorityService
-import manjuu.services.EstablishmentService
-import manjuu.services.EstablishmentServiceError
+import manjuu.services._
 
 import cats.Monad
 import cats.effect._
