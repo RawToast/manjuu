@@ -19,6 +19,7 @@ import org.http4s.server.middleware.ErrorAction
 import org.http4s.server.middleware.ErrorHandling
 
 object Server extends IOApp:
+  override protected def blockedThreadDetectionEnabled = true
 
   val clientResource = EmberClientBuilder
     .default[IO]

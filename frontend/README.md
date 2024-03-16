@@ -41,6 +41,12 @@ The github actions can be ran locally using [Act](https://github.com/nektos/act)
 
 The following command will run the github action locally, which is useful for debugging or testing new configuration: `act -P ubuntu-22.04=cypress/included:12.17.3`
 
+### Updating Components
+
+The following will update all installed components to the latest version
+
+`for file in src/components/ui/*.tsx; do bunx shadcn-ui@latest add -y -o $(basename "$file" .tsx); done`
+
 ## Cool Stuff to Check Out
 
 - [React Router](https://reactrouter.com/)

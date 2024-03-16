@@ -4,6 +4,7 @@ import manjuu.Responses.multiAuthorityResponse
 import manjuu.domain.Authority
 
 import io.circe.literal.json
+import scala.collection.immutable.Seq
 
 class AuthorityParserSpec extends munit.FunSuite:
 
@@ -30,14 +31,12 @@ class AuthorityParserSpec extends munit.FunSuite:
     assert(sorted.last.id == 48)
     assert(sorted.last.establishments == 967)
 
-
   test("must include the authority details"):
     val authorites: Seq[Authority] = parser.summariseAuthorites(singleAuthorityResponse)
     assert(authorites.size == 1)
     assert(authorites.head.name == "Aberdeen City")
     assert(authorites.head.id == 197)
     assert(authorites.head.establishments == 1761)
-
 
   val singleAuthorityResponse =
     json"""{
