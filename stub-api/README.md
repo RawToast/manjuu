@@ -14,3 +14,9 @@ bun dev
 ```
 
 Open http://localhost:3000/ with your browser to see the result.
+
+## Cool Stuff
+
+- [Elysia](https://elysiajs.com)
+- [Immutable](https://immutable-js.com)
+- [Bun](https://bun.sh)
