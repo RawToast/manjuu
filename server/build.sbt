@@ -17,8 +17,13 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "manjuu-backend",
-    version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    assembly / mainClass := Some("manjuu.Server"),
+    assembly / assemblyJarName := "manjuu-backend.jar",
+    assembly / assemblyMergeStrategy := {
+      case PathList("META-INF", _*) => MergeStrategy.discard
+      case _                        => MergeStrategy.first
+    },
     libraryDependencies ++= Seq(
       // Http4s server
       "org.http4s" %% "http4s-ember-server" % Http4sVersion,
