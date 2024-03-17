@@ -8,7 +8,6 @@ import manjuu.services.{AuthorityService, EstablishmentService}
 import manjuu.services.util.{AuthorityParser, EstablishmentParser, RatingsFormatter}
 
 import cats.effect._
-import com.comcast.ip4s._
 import dev.profunktor.redis4cats.Redis
 import dev.profunktor.redis4cats.codecs.Codecs
 import dev.profunktor.redis4cats.codecs.splits.SplitEpi
@@ -16,12 +15,13 @@ import dev.profunktor.redis4cats.data.RedisCodec
 import org.http4s.Method
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server._
-import org.http4s.implicits.uri
 import org.http4s.server.middleware.{CORS, CORSConfig, ErrorAction, ErrorHandling}
 import scala.concurrent.duration.DurationInt
 
 object Server extends IOApp:
   override protected def blockedThreadDetectionEnabled = true
+
+  val config = Config.load
 
   val clientResource = EmberClientBuilder
     .default[IO]
@@ -29,11 +29,11 @@ object Server extends IOApp:
 
   val authParser          = AuthorityParser.impl()
   val establishmentParser = EstablishmentParser.impl()
-  val redisUri            = "redis://localhost:6379"
+  val redisUri            = s"redis://${config.redisHost}:${config.resisPort}"
 
   val redisResource = Cache.redis[IO](redisUri, 1.hour)
 
-  val fsaClient                                      = FSAClient.impl(clientResource, uri"https://api.ratings.food.gov.uk")
+  val fsaClient                                      = FSAClient.impl(clientResource, config.apiUri)
   val authorityService                               = AuthorityService.impl(fsaClient, authParser)
   val ratingsFormatter                               = RatingsFormatter.impl()
   val establishmentService: EstablishmentService[IO] =
@@ -65,9 +65,14 @@ object Server extends IOApp:
   def run(args: List[String])        =
     EmberServerBuilder
       .default[IO]
-      .withHost(ipv4"0.0.0.0")
-      .withPort(port"8080")
+      .withHost(config.serverHost)
+      .withPort(config.serverPort)
       .withHttpApp(corsEnabledAppWithErrorLogging)
       .build
-      .use(_ => IO.never)
-      .as(ExitCode.Success)
+      .use(
+        server =>
+          for {
+            _    <- IO.delay(println(s"Server Has Started at ${server.address}"))
+            exit <- IO.never.as(ExitCode.Success)
+          } yield exit
+      )

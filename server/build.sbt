@@ -42,6 +42,9 @@ lazy val root = project
 
       // Logging
       "ch.qos.logback" % "logback-classic" % LogbackVersion,
+
+      // Config
+      "com.typesafe" % "config" % "1.4.3",
       // "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 
       // Test
