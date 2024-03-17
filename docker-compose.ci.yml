@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  server:
+    build: server
+    command: java -Dconfig.resource=/ci.conf -jar manjuu-backend.jar
+    restart: always
+    depends_on:
+      - redis
+    ports:
+      - 8080:8080
+  stub-api:
+    build: stub-api
+    command: bun src/index.ts
+    restart: always
+    ports:
+      - 3000:3000
+  redis:
+    image: redis:7.2-alpine
+    hostname: redis
+    restart: always

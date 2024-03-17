@@ -1,10 +1,16 @@
 package manjuu
 
+import com.comcast.ip4s._
 import com.typesafe.config.ConfigFactory
 import org.http4s.Uri
-import com.comcast.ip4s._
 
-case class Config(serverHost: Ipv4Address, serverPort: Port, redisHost: String, resisPort: Int, apiUri: Uri)
+case class Config(
+  serverHost: Ipv4Address,
+  serverPort: Port,
+  redisHost: String,
+  resisPort: Int,
+  apiUri: Uri
+)
 
 object Config:
   def load: Config =
@@ -14,12 +20,14 @@ object Config:
     val resisPort = conf.getInt("services.redis.port")
 
     val apiUriString = conf.getString("services.api.uri")
-    val apiUri = Uri.fromString(apiUriString)
+    val apiUri       = Uri
+      .fromString(apiUriString)
       .getOrElse(throw new IllegalArgumentException("Invalid API URI"))
 
     val serverPortInt = conf.getInt("app.port")
-    val serverPort = Port.fromInt(serverPortInt)
+    val serverPort    = Port
+      .fromInt(serverPortInt)
       .getOrElse(throw new IllegalArgumentException("Server port not configured"))
-    val serverHost = ipv4"0.0.0.0"
+    val serverHost    = ipv4"0.0.0.0"
 
-    Config( serverHost, serverPort, redisHost, resisPort, apiUri)
+    Config(serverHost, serverPort, redisHost, resisPort, apiUri)

@@ -11,6 +11,7 @@ import cats.implicits._
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
 import io.circe.syntax._
+import org.http4s.implicits.path
 import scala.collection.immutable.Seq
 import scala.concurrent.duration.FiniteDuration
 
@@ -25,7 +26,7 @@ object AuthorityService:
     new AuthorityService[IO] {
       def authorities =
         return fsaClient
-          .fetch("authorities/basic")
+          .fetch(path"authorities" / "basic")
           .map(authorityParser.summariseAuthorites)
     }
 

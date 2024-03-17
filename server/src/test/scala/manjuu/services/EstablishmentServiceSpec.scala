@@ -51,16 +51,9 @@ object EstablishmentServiceSpec:
         ) =>
       Ok(validEstablishmentsJson)
 
-    case GET -> Root / "authorities" / IntVar(id)                       =>
+    case GET -> Root / "authorities" / IntVar(id) =>
       authorityResponses.get(id) match
         case Some(authority) => Ok(authority)
         case None            => NotFound()
-    case r if r.method == GET && r.pathInfo == path"/authorities%2F111" =>
-      r.pathInfo.renderString.split("%2F").toList match
-        case "/authorities" :: id :: _ =>
-          authorityResponses.get(id.toInt) match
-            case Some(authority) => Ok(authority)
-            case None            => NotFound()
-        case _                         => NotFound()
   }
   val httpApp: HttpApp[IO] = routes.orNotFound

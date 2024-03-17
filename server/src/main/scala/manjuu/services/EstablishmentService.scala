@@ -12,6 +12,7 @@ import cats.implicits._
 import io.circe.Json
 import io.circe.syntax._
 import org.http4s.EntityDecoder
+import org.http4s.Uri.Path
 import org.http4s.implicits._
 import scala.concurrent.duration.FiniteDuration
 
@@ -62,7 +63,7 @@ object EstablishmentService:
               .map(_.toRight[EstablishmentServiceError](AuthorityNotFound))
           )
 
-        val path = s"establishments"
+        val path: Path = path"establishments"
 
         val getSummary = (authority: AuthorityResponse) =>
           client
