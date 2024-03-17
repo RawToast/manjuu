@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  server:
+    build: server
+    command: java -jar manjuu-backend.jar
+    restart: always
+    depends_on:
+      - redis
+    ports:
+      - 8080:8080
+  redis:
+    image: redis:7.2-alpine
+    hostname: redis
+    restart: always
