@@ -2,7 +2,7 @@ name: Cypress
 
 on:
   push:
-    branches: ["master", "ci-update"]
+    branches: ["master"]
   pull_request:
     branches: ["master"]
 
