@@ -15,9 +15,9 @@ Run the other services using docker compose to create a test environment.
 
 Note you need to be in the root directory (not this one!)
 
-- Build the containers: `docker-compose -f docker-compose.ci.yml build`
-- Start the services: `docker-compose -f docker-compose.ci.yml up -d`
-- Stop the services: `docker-compose -f docker-compose.ci.yml down`
+- Build the containers: `docker compose -f compose.ci.yml build`
+- Start the services: `docker compose -f compose.ci.yml up -d`
+- Stop the services: `docker compose -f compose.ci.yml down`
 - View logs `docker logs <container_id>`
 
 After starting the services, the frontend should be available at localhost:3000
