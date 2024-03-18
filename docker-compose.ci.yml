@@ -7,15 +7,26 @@ services:
     restart: always
     depends_on:
       - redis
+      - stub-api
     ports:
       - 8080:8080
   stub-api:
     build: stub-api
     command: bun src/index.ts
     restart: always
-    ports:
-      - 3000:3000
   redis:
     image: redis:7.2-alpine
     hostname: redis
     restart: always
+  frontend:
+    build:
+      context: frontend
+      args:
+        - VITE_API_BASE_URL=http://localhost:8080
+        - NODE_ENV=ci
+    command: bun preview
+    restart: always
+    depends_on:
+      - server
+    ports:
+      - 3000:3000
