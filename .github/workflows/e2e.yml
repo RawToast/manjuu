@@ -1,0 +1,45 @@
+name: Cypress
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          cache: "npm"
+          cache-dependency-path: e2e/package-lock.json
+
+      - name: Set cache
+        run: npm set cache e2e/.npm
+
+      - name: Run
+        run: |
+          docker compose -f compose.ci.yml build
+          docker compose -f compose.ci.yml up -d
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          wait-on: "http://localhost:3000"
+          wait-on-timeout: 10
+          working-directory: "e2e"
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: e2e/cypress/screenshots
