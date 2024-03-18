@@ -32,8 +32,8 @@ const app = new Elysia()
     {
       query: t.Object({
         localAuthorityId: t.String(),
-        pageSize: t.Optional(t.Number()),
-        pageNumber: t.Optional(t.Number())
+        pageSize: t.Optional(t.String()),
+        pageNumber: t.Optional(t.String())
       })
     }
   )

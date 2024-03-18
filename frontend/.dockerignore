@@ -1,0 +1,10 @@
+node_modules
+Dockerfile*
+.dockerignore
+README.md
+.vscode
+Makefile
+.env
+.editorconfig
+coverage*
+**/__test__/**

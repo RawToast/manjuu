@@ -69,10 +69,6 @@ object Server extends IOApp:
       .withPort(config.serverPort)
       .withHttpApp(corsEnabledAppWithErrorLogging)
       .build
-      .use(
-        server =>
-          for {
-            _    <- IO.delay(println(s"Server Has Started at ${server.address}"))
-            exit <- IO.never.as(ExitCode.Success)
-          } yield exit
-      )
+      .evalTap(server => IO.println(s"Server Has Started at ${server.address}"))
+      .useForever
+      .as(ExitCode.Success)

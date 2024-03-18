@@ -13,23 +13,23 @@ import org.log4s._
 
 trait FSAClient[F[_], T]:
   def get[T](path: Path)(using EntityDecoder[F, T]): F[Option[T]]
-  def fetch(path: String, params: Map[String, String] = Map.empty): F[Json]
+  def fetch(path: Path, params: Map[String, String] = Map.empty): F[Json]
 
 object FSAClient:
   def impl(client: Resource[IO, Client[IO]], baseUri: Uri) =
     new FSAClient[IO, Json]:
-      val versionHeader                                                    = "x-api-version" -> "2"
-      def fetch(basePath: String, params: Map[String, String] = Map.empty) =
+      val versionHeader                                              = "x-api-version" -> "2"
+      def fetch(path: Path, params: Map[String, String] = Map.empty) =
         return client.use(
           _.expect[Json](
             Request(
               Method.GET,
-              (baseUri / basePath).withQueryParams(params),
+              path.segments.foldLeft(baseUri)(_ / _).withQueryParams(params),
               headers = Headers(versionHeader)
             )
           )
         )
-      def get[T](path: Path)(using EntityDecoder[IO, T])                   =
+      def get[T](path: Path)(using EntityDecoder[IO, T])             =
         return client.use(
           _.expectOption[T](
             Request(

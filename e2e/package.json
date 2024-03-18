@@ -1,0 +1,19 @@
+{
+  "name": "e2e",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "cypress": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:chrome": "cypress run -b chrome",
+    "cypress:run:firefox": "cypress run -b firefox",
+    "format": "prettier --ignore-path .gitignore --write \"cypress/**/*.{js,jsx,cy.js}\""
+  },
+  "dependencies": {
+    "cypress": "^13.7.0"
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.1.0",
+    "prettier": "2.8.8"
+  }
+}
