@@ -63,14 +63,15 @@ export function SearchBar() {
         <></>
       ) : (
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading='Authorities'>
+          <CommandEmpty data-testid='search-no-results'>No results found.</CommandEmpty>
+          <CommandGroup data-testid='search-authorities-group' heading='Authorities'>
             {status === 'pending' ? (
               <CommandEmpty>Loading...</CommandEmpty>
             ) : (
               data.map((authority) => {
                 return (
                   <Link
+                    data-testid={`result-${authority.name.toLowerCase().replaceAll(' ', '-')}`}
                     key={'link' + authority.id}
                     to='/authority/$authorityId'
                     params={{ authorityId: `${authority.id}` }}
@@ -112,7 +113,12 @@ function AuthorityItem({
   onClick: (Authority) => void
 }) {
   return (
-    <CommandItem value={authority.name} key={authority.id} onClick={() => onClick(authority)}>
+    <CommandItem
+      data-testid={`result-${authority.name.toLowerCase().replaceAll(' ', '-')}`}
+      value={authority.name}
+      key={authority.id}
+      onClick={() => onClick(authority)}
+    >
       {authority.establishments > 3000 ? (
         <BuildingOffice2Icon className='mr-2 h-4 w-4' />
       ) : authority.establishments > 2000 ? (
