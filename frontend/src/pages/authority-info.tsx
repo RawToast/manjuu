@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { authorityInfoQueryOptions } from '@/lib/router'
 import { useQuery } from '@tanstack/react-query'
 import { Ratings, ScottishRatings, StandardRatings } from '@src/lib/client'
+import { ErrorCard } from './error-page'
 
 const LoadingCard = () => (
   <Card>
@@ -76,7 +77,7 @@ export const AuthorityInfo = ({ authorityId }: { authorityId: string }) => {
   const { data, isPending, isError } = result
 
   if (isError) {
-    return <p>Error</p>
+    return <ErrorCard />
   }
 
   if (isPending) {

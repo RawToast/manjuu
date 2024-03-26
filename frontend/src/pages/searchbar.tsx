@@ -19,7 +19,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 
 export function SearchBar() {
-  const { status, data, error } = useQuery({ queryKey: ['todos'], queryFn: fetchAuthorities })
+  const { status, data } = useQuery({ queryKey: ['todos'], queryFn: fetchAuthorities })
 
   const [searchText, setSearchText] = useState('')
   const [recent, setRecent] = useState<Authority[]>([])
@@ -31,10 +31,6 @@ export function SearchBar() {
       // .filter((item, index, self) => self.findIndex((i) => i.id === item.id) === index)
       // .slice(0, 5)
     )
-  }
-
-  if (status === 'error') {
-    return <span>Error: {error.message}</span>
   }
 
   function onAuthorityClick(_e: React.MouseEvent<'a', MouseEvent>, _authorityId: number) {
@@ -56,7 +52,7 @@ export function SearchBar() {
         }}
         data-testid='searchbar-input'
       />
-      {searchText.length <= 1 ? (
+      {searchText.length <= 0 ? (
         <></>
       ) : (
         <CommandList>
