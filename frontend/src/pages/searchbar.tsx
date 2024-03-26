@@ -37,10 +37,7 @@ export function SearchBar() {
     return <span>Error: {error.message}</span>
   }
 
-  function onAuthorityClick(
-    _e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-    _authorityId: number
-  ) {
+  function onAuthorityClick(_e: React.MouseEvent<'a', MouseEvent>, _authorityId: number) {
     // Could update recent here
     setSearchText('')
   }
@@ -59,7 +56,7 @@ export function SearchBar() {
         }}
         data-testid='searchbar-input'
       />
-      {searchText.length <= 0 ? (
+      {searchText.length <= 1 ? (
         <></>
       ) : (
         <CommandList>

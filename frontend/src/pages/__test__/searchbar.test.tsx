@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test } from 'vitest'
 
@@ -18,14 +18,16 @@ const queryClient = new QueryClient({
   }
 })
 
-test('Renders searchbar', () => {
+test('Renders searchbar', async () => {
   const testRouter = createTestRouter(() => <SearchBar />, queryClient)
-  render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={testRouter} />,
-    </QueryClientProvider>
+  await act(async () =>
+    render(
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={testRouter} />,
+      </QueryClientProvider>
+    )
   )
-  const childText = screen.getByPlaceholderText(/Search for an authority/i)
+  const childText = await waitFor(() => screen.getByLabelText(/Search for an authority/i))
   expect(childText).toBeVisible()
   expect(childText).toMatchSnapshot()
 })
@@ -38,11 +40,12 @@ test('Highlights best answer in search results', async () => {
     </QueryClientProvider>
   )
 
-  const label = await screen.getByLabelText(/Search for an authority/i)
+  const label = await screen.findByPlaceholderText(/Search for an authority/i)
   const text = 'Edi'
-  await act(async () => await userEvent.type(label, text))
 
-  expect((label as HTMLInputElement).value).toEqual(text)
+  await userEvent.type(label, text)
+  const newLabel = await screen.findByPlaceholderText(/Search for an authority/i)
+  expect((newLabel as HTMLInputElement).value).toEqual(text)
 
   const loading = await screen.findByRole('presentation')
   expect(loading).toBeVisible()
