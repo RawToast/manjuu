@@ -35,5 +35,5 @@ jobs:
         working-directory: "frontend"
       - run: bun run build
         working-directory: "frontend"
-      - run: bun run test
+      - run: bun run ci
         working-directory: "frontend"

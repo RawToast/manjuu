@@ -1,17 +1,18 @@
-import { Route, Router, rootRouteWithContext } from '@tanstack/react-router'
+import { createRootRouteWithContext, createRoute, createRouter } from '@tanstack/react-router'
 import { AuthorityInfo, Layout } from '@/pages'
 import { QueryClient, queryOptions } from '@tanstack/react-query'
 import { fetchAuthorityStats } from '@/lib/client'
 
 export const queryClient = new QueryClient()
 
-const rootRoute = rootRouteWithContext<{
+const rootRoute = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
-  component: Layout
+  component: Layout,
+  notFoundComponent: () => <div id='empty-route'></div>
 })
 
-export const authoritiesRoute = new Route({
+export const authoritiesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'authority'
 })
@@ -22,7 +23,7 @@ export const authorityInfoQueryOptions = (authorityId: string) =>
     queryFn: () => fetchAuthorityStats(authorityId)
   })
 
-export const authorityStats = new Route({
+export const authorityStats = createRoute({
   getParentRoute: () => authoritiesRoute,
   path: '$authorityId',
   component: () => {
@@ -38,7 +39,7 @@ export const authorityStats = new Route({
 const authorityRoutes = authoritiesRoute.addChildren([authorityStats])
 const routeTree = rootRoute.addChildren([authorityRoutes])
 
-export const router = new Router({
+export const router = createRouter({
   routeTree,
   context: { queryClient: queryClient }
 })
