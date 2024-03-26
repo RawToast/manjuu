@@ -30,8 +30,6 @@ test('Renders searchbar', async () => {
   const childText = await waitFor(() => screen.getByLabelText(/Search for an authority/i))
   expect(childText).toBeVisible()
   expect(childText).toMatchSnapshot()
-
-  const label = screen.getByLabelText(/Search for an authority/i)
 })
 
 test('Highlights best answer in search results', async () => {
