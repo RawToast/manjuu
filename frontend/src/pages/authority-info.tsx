@@ -77,7 +77,7 @@ export const AuthorityInfo = ({ authorityId }: { authorityId: string }) => {
   const { data, isPending, isError } = result
 
   if (isError) {
-    return <ErrorCard />
+    return <ErrorCard reload={false} />
   }
 
   if (isPending) {
