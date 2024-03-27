@@ -52,15 +52,15 @@ export function SearchBar() {
         }}
         data-testid='searchbar-input'
       />
-      {searchText.length <= 0 ? (
+      {searchText.length <= 1 ? (
         <></>
       ) : (
         <CommandList>
           <CommandEmpty data-testid='search-no-results'>No results found.</CommandEmpty>
           <CommandGroup data-testid='search-authorities-group' heading='Authorities'>
-            {status === 'pending' ? (
-              <CommandEmpty>Loading...</CommandEmpty>
-            ) : (
+            {/* Status error will bubble up to the top level */}
+            {status === 'pending' && <CommandEmpty>Loading...</CommandEmpty>}
+            {status === 'success' &&
               data.map((authority) => {
                 return (
                   <Link
@@ -79,8 +79,7 @@ export function SearchBar() {
                     ></AuthorityItem>
                   </Link>
                 )
-              })
-            )}
+              })}
           </CommandGroup>
           <CommandSeparator />
           {/* <CommandGroup heading='Recent'>
