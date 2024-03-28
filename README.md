@@ -5,6 +5,8 @@
 
 Some fun with Bun, Scala, and the UK Food Hygiene API
 
+![demo](./assets/demo.mov)
+
 This project consists of multiple services. See each service's readme file for more information.
 
 ### Frontend
