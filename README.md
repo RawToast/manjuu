@@ -1,6 +1,6 @@
 # 饅頭 (manjuu)
 
-![ci](https://github.com/rawtoast/manjuu/actions/workflows/ci.yml/badge.svg)
+![build](https://github.com/rawtoast/manjuu/actions/workflows/build.yml/badge.svg)
 ![e2e](https://github.com/rawtoast/manjuu/actions/workflows/e2e.yml/badge.svg)
 
 Some fun with Bun, Scala, and the UK Food Hygiene API
