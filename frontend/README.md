@@ -1,7 +1,5 @@
 # Frontend
 
-![example workflow](https://github.com/RawToast/Kiso/actions/workflows/test.yml/badge.svg)
-
 ## Getting Started
 
 ### Prerequisites

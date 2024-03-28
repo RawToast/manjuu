@@ -12,6 +12,7 @@ import dev.profunktor.redis4cats.Redis
 import dev.profunktor.redis4cats.codecs.Codecs
 import dev.profunktor.redis4cats.codecs.splits.SplitEpi
 import dev.profunktor.redis4cats.data.RedisCodec
+import fs2.Stream
 import org.http4s.Method
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server._
@@ -63,12 +64,17 @@ object Server extends IOApp:
     )
   )
   def run(args: List[String])        =
-    EmberServerBuilder
-      .default[IO]
-      .withHost(config.serverHost)
-      .withPort(config.serverPort)
-      .withHttpApp(corsEnabledAppWithErrorLogging)
-      .build
-      .evalTap(server => IO.println(s"Server Has Started at ${server.address}"))
-      .useForever
+    Stream
+      .eval(
+        EmberServerBuilder
+          .default[IO]
+          .withHost(config.serverHost)
+          .withPort(config.serverPort)
+          .withHttpApp(corsEnabledAppWithErrorLogging)
+          .build
+          .evalTap(server => IO.println(s"Server Has Started at ${server.address}"))
+          .useForever
+      )
+      .compile
+      .drain
       .as(ExitCode.Success)
