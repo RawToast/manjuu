@@ -1,7 +1,5 @@
 # Manjuu Server
 
-![ci](https://github.com/rawtoast/http4s-twirl-example/actions/workflows/ci.yml/badge.svg)
-
 This application is a simple backend example using Http4s, Redis, and Circe -- including some example unit tests. 
 The initial goal was to rework my old [http4s-twirl-example](https://github.com/RawToast/http4s-twirl-example) 
 to use Scala 3, as a backend for some frontend work.

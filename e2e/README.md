@@ -1,5 +1,7 @@
 # E2E
 
+![e2e](https://github.com/rawtoast/manjuu/actions/workflows/e2e.yml/badge.svg)
+
 Cypress test suite
 
 # Scripts

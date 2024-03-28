@@ -1,6 +1,11 @@
 # 饅頭 (manjuu)
 
+![build](https://github.com/rawtoast/manjuu/actions/workflows/build.yml/badge.svg)
+![e2e](https://github.com/rawtoast/manjuu/actions/workflows/e2e.yml/badge.svg)
+
 Some fun with Bun, Scala, and the UK Food Hygiene API
+
+![demo](./assets/demo.mov)
 
 This project consists of multiple services. See each service's readme file for more information.
 
