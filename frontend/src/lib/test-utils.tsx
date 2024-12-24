@@ -7,7 +7,7 @@ import {
   createRootRouteWithContext
 } from '@tanstack/react-router'
 
-export function createTestRouter(component: () => JSX.Element, queryClient: QueryClient) {
+export function createTestRouter(component: () => React.ReactNode, queryClient: QueryClient) {
   const rootRoute = createRootRouteWithContext<{ queryClient: QueryClient }>()({
     component: Outlet
   })

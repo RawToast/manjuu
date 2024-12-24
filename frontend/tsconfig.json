@@ -3,12 +3,12 @@
   // https://github.com/cypress-io/cypress/issues/26308#issuecomment-1663592648
   //
   // TODO: Remove when issue is resolved https://github.com/cypress-io/cypress/issues/27448
-  "ts-node": {
-    "compilerOptions": {
-      "module": "ESNext",
-      "moduleResolution": "node"
-    }
-  },
+  // "ts-node": {
+  //   "compilerOptions": {
+  //     "module": "ESNext",
+  //     "moduleResolution": "node"
+  //   }
+  // },
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -24,6 +24,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "types": ["cypress", "bun", "vite/client"],
     "baseUrl": ".",
     "paths": {
       "@src/*": ["src/*"],
@@ -43,9 +44,8 @@
     // end strict
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
   },
   "include": ["src", "cypress"],
   "references": [{ "path": "./tsconfig.node.json" }],
-  "types": ["cypress", "node"]
 }
