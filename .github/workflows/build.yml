@@ -21,9 +21,10 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: "sbt"
+      - uses: sbt/setup-sbt@v1
       - name: Run tests
-        working-directory: "server"
         run: sbt test
+        working-directory: "server"
   frontend:
     runs-on: ubuntu-latest
 
