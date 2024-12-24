@@ -1,14 +1,4 @@
 {
-  // Old "moduleResolution": "Node" option required for Cypress
-  // https://github.com/cypress-io/cypress/issues/26308#issuecomment-1663592648
-  //
-  // TODO: Remove when issue is resolved https://github.com/cypress-io/cypress/issues/27448
-  "ts-node": {
-    "compilerOptions": {
-      "module": "ESNext",
-      "moduleResolution": "node"
-    }
-  },
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -24,10 +14,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
       "@src/*": ["src/*"],
-      "@cypress/*": ["cypress/*"],
       "@/*": ["./src/*"],
     },
     /* Linting */
@@ -43,9 +33,8 @@
     // end strict
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
   },
-  "include": ["src", "cypress"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }],
-  "types": ["cypress", "node"]
 }

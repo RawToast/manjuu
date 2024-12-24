@@ -2,10 +2,21 @@
 import { defineConfig } from 'vite'
 import path from 'path'
 import react from '@vitejs/plugin-react-swc'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import checker from 'vite-plugin-checker'
+
+const isCi = process.env.NODE_ENV === 'ci'
+
+const plugins = [
+  react(),
+  isCi
+    ? null
+    : checker({
+        typescript: true
+      })
+]
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: plugins,
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')

@@ -7,5 +7,5 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts", "cypress.config.ts", "postcss.config.js", "tailwind.config.js"]
+  "include": ["vite.config.ts", "postcss.config.js", "tailwind.config.js"]
 }

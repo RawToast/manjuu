@@ -1,10 +1,10 @@
-import * as matchers from '@testing-library/jest-dom/matchers'
-import { afterEach, afterAll, beforeAll, expect } from 'vitest'
+import '@testing-library/jest-dom'
+import { afterEach, afterAll, beforeAll } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
 import { server } from '@/lib/mock-server'
 
-expect.extend(matchers)
+// expect.extend(matchers)
 
 beforeAll(() => server.listen())
 

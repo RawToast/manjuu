@@ -1,10 +1,11 @@
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+
 import { expect, test } from 'vitest'
 
 import { ErrorCard, ErrorPage } from '../error-page'
 
 test('Renders error page with card', async () => {
-  await act(async () => render(<ErrorPage />))
+  render(<ErrorPage />)
 
   const page = screen.getByTestId('error-page')
   expect(page).toBeVisible()
