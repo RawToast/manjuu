@@ -11,7 +11,8 @@ const plugins = [
   isCi
     ? null
     : checker({
-        typescript: true
+        typescript: true,
+        overlay: false
       })
 ]
 
