@@ -8,11 +8,10 @@ const isCi = process.env.NODE_ENV === 'ci'
 
 const plugins = [
   react(),
-  isCi
-    ? null
-    : checker({
-        typescript: true
-      })
+  checker({
+    typescript: true,
+    overlay: isCi ? false : true
+  })
 ]
 
 export default defineConfig({
